@@ -4,61 +4,52 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Itinerary } from "@/types";
 import { getItineraries, saveItinerary, deleteItinerary } from "@/lib/storage";
-import GenerateForm from "@/components/GenerateForm";
+import CreateTripForm from "@/components/CreateTripForm";
 import { MapPin, Calendar, Trash2, ArrowRight, Plane } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     setItineraries(getItineraries());
   }, []);
 
-  const handleGenerate = async (params: {
+  const handleCreate = (params: {
     destination: string;
     days: number;
     startDate: string;
     budget: string;
-    preferences: string;
   }) => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/generate-itinerary", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
-      });
-      if (!res.ok) throw new Error((await res.json()).error || "生成失敗");
-      const data = await res.json();
+    const endDate = new Date(params.startDate);
+    endDate.setDate(endDate.getDate() + params.days - 1);
 
-      const endDate = new Date(params.startDate);
-      endDate.setDate(endDate.getDate() + params.days - 1);
-
-      const itinerary: Itinerary = {
-        id: Date.now().toString(),
-        title: data.title,
-        destination: params.destination,
-        startDate: params.startDate,
-        endDate: endDate.toISOString().split("T")[0],
-        days: data.days,
-        totalBudget: data.totalBudget,
-        createdAt: new Date().toISOString(),
+    const days = Array.from({ length: params.days }, (_, i) => {
+      const date = new Date(params.startDate);
+      date.setDate(date.getDate() + i);
+      return {
+        day: i + 1,
+        date: date.toISOString().split("T")[0],
+        activities: [],
       };
+    });
 
-      saveItinerary(itinerary);
-      setItineraries(getItineraries());
-      setShowForm(false);
-      router.push(`/itinerary/${itinerary.id}`);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "生成失敗，請稍後再試");
-    } finally {
-      setLoading(false);
-    }
+    const itinerary: Itinerary = {
+      id: Date.now().toString(),
+      title: `${params.destination}之旅`,
+      destination: params.destination,
+      startDate: params.startDate,
+      endDate: endDate.toISOString().split("T")[0],
+      days,
+      totalBudget: params.budget ? parseInt(params.budget) : 0,
+      createdAt: new Date().toISOString(),
+    };
+
+    saveItinerary(itinerary);
+    setItineraries(getItineraries());
+    setShowForm(false);
+    router.push(`/itinerary/${itinerary.id}`);
   };
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
@@ -74,8 +65,8 @@ export default function Home() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
             <Plane size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">AI 旅遊規劃</h1>
-          <p className="text-gray-500 mt-2">讓 AI 幫你規劃完美行程</p>
+          <h1 className="text-3xl font-bold text-gray-900">旅遊規劃</h1>
+          <p className="text-gray-500 mt-2">輕鬆規劃你的旅遊行程</p>
         </div>
 
         {!showForm ? (
@@ -83,18 +74,15 @@ export default function Home() {
             onClick={() => setShowForm(true)}
             className="w-full py-4 bg-blue-600 text-white rounded-2xl font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 mb-6 shadow-lg shadow-blue-200"
           >
-            ✨ 建立新行程
+            + 建立新行程
           </button>
         ) : (
           <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">規劃新行程</h2>
+              <h2 className="text-lg font-semibold text-gray-800">建立新行程</h2>
               <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
             </div>
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>
-            )}
-            <GenerateForm onGenerate={handleGenerate} loading={loading} />
+            <CreateTripForm onSubmit={handleCreate} />
           </div>
         )}
 
@@ -115,7 +103,9 @@ export default function Home() {
                         <span className="flex items-center gap-1"><MapPin size={13} />{it.destination}</span>
                         <span className="flex items-center gap-1"><Calendar size={13} />{it.startDate}</span>
                       </div>
-                      <p className="text-xs text-green-600 mt-1 font-medium">預估 NT${it.totalBudget.toLocaleString()}</p>
+                      {it.totalBudget > 0 && (
+                        <p className="text-xs text-green-600 mt-1 font-medium">預算 NT${it.totalBudget.toLocaleString()}</p>
+                      )}
                     </div>
                     <div className="flex items-center gap-2 ml-2">
                       <button

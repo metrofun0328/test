@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { DayPlan, Activity } from "@/types";
-import { Clock, MapPin, Utensils, Camera, Car, Home, MoreHorizontal, ChevronDown, ChevronUp } from "lucide-react";
+import { Clock, MapPin, Utensils, Camera, Car, Home, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 
 const categoryIcon = {
   food: <Utensils size={14} />,
@@ -28,9 +28,9 @@ const categoryLabel = {
   other: "其他",
 };
 
-function ActivityCard({ activity }: { activity: Activity }) {
+function ActivityCard({ activity, onDelete }: { activity: Activity; onDelete: () => void }) {
   return (
-    <div className="flex gap-3 p-3 bg-white rounded-lg border border-gray-100 hover:shadow-sm transition-shadow">
+    <div className="flex gap-3 p-3 bg-white rounded-lg border border-gray-100 hover:shadow-sm transition-shadow group">
       <div className="text-xs text-gray-400 w-12 pt-0.5 flex-shrink-0">
         <Clock size={12} className="inline mr-1" />
         {activity.time}
@@ -38,16 +38,26 @@ function ActivityCard({ activity }: { activity: Activity }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h4 className="font-medium text-gray-800 text-sm">{activity.title}</h4>
-          <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border flex-shrink-0 ${categoryColor[activity.category]}`}>
-            {categoryIcon[activity.category]}
-            {categoryLabel[activity.category]}
-          </span>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${categoryColor[activity.category]}`}>
+              {categoryIcon[activity.category]}
+              {categoryLabel[activity.category]}
+            </span>
+            <button
+              onClick={onDelete}
+              className="p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+            >
+              <Trash2 size={13} />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
-          <MapPin size={11} />
-          {activity.location}
-        </div>
-        <p className="text-xs text-gray-500 mt-1">{activity.description}</p>
+        {activity.location && (
+          <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
+            <MapPin size={11} />
+            {activity.location}
+          </div>
+        )}
+        {activity.description && <p className="text-xs text-gray-500 mt-1">{activity.description}</p>}
         {activity.estimatedCost > 0 && (
           <p className="text-xs text-green-600 mt-1 font-medium">約 NT${activity.estimatedCost.toLocaleString()}</p>
         )}
@@ -56,7 +66,17 @@ function ActivityCard({ activity }: { activity: Activity }) {
   );
 }
 
-function DayCard({ dayPlan }: { dayPlan: DayPlan }) {
+function DayCard({
+  dayPlan,
+  dayIndex,
+  onAddActivity,
+  onDeleteActivity,
+}: {
+  dayPlan: DayPlan;
+  dayIndex: number;
+  onAddActivity: (dayIndex: number) => void;
+  onDeleteActivity: (dayIndex: number, activityId: string) => void;
+}) {
   const [expanded, setExpanded] = useState(true);
   const dailyCost = dayPlan.activities.reduce((sum, a) => sum + a.estimatedCost, 0);
 
@@ -76,15 +96,29 @@ function DayCard({ dayPlan }: { dayPlan: DayPlan }) {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-green-600 font-medium">NT${dailyCost.toLocaleString()}</span>
+          {dailyCost > 0 && <span className="text-xs text-green-600 font-medium">NT${dailyCost.toLocaleString()}</span>}
           {expanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
         </div>
       </button>
       {expanded && (
         <div className="p-4 space-y-2 bg-gray-50">
+          {dayPlan.activities.length === 0 && (
+            <p className="text-xs text-gray-400 text-center py-2">還沒有活動，點下方按鈕新增</p>
+          )}
           {dayPlan.activities.map((activity) => (
-            <ActivityCard key={activity.id} activity={activity} />
+            <ActivityCard
+              key={activity.id}
+              activity={activity}
+              onDelete={() => onDeleteActivity(dayIndex, activity.id)}
+            />
           ))}
+          <button
+            onClick={() => onAddActivity(dayIndex)}
+            className="w-full py-2 border border-dashed border-gray-300 rounded-lg text-xs text-gray-400 hover:border-blue-400 hover:text-blue-500 flex items-center justify-center gap-1 transition-colors"
+          >
+            <Plus size={13} />
+            新增活動
+          </button>
         </div>
       )}
     </div>
@@ -98,9 +132,11 @@ interface Props {
   endDate: string;
   days: DayPlan[];
   totalBudget: number;
+  onAddActivity: (dayIndex: number) => void;
+  onDeleteActivity: (dayIndex: number, activityId: string) => void;
 }
 
-export default function ItineraryView({ title, destination, startDate, endDate, days, totalBudget }: Props) {
+export default function ItineraryView({ title, destination, startDate, endDate, days, totalBudget, onAddActivity, onDeleteActivity }: Props) {
   return (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-5 text-white">
@@ -109,14 +145,22 @@ export default function ItineraryView({ title, destination, startDate, endDate, 
           <span className="flex items-center gap-1"><MapPin size={14} />{destination}</span>
           <span className="flex items-center gap-1"><Clock size={14} />{startDate} ～ {endDate}</span>
         </div>
-        <div className="mt-3 text-lg font-semibold">
-          預估總費用：NT${totalBudget.toLocaleString()}
-        </div>
+        {totalBudget > 0 && (
+          <div className="mt-3 text-lg font-semibold">
+            預估總費用：NT${totalBudget.toLocaleString()}
+          </div>
+        )}
       </div>
 
       <div className="space-y-3">
-        {days.map((day) => (
-          <DayCard key={day.day} dayPlan={day} />
+        {days.map((day, index) => (
+          <DayCard
+            key={day.day}
+            dayPlan={day}
+            dayIndex={index}
+            onAddActivity={onAddActivity}
+            onDeleteActivity={onDeleteActivity}
+          />
         ))}
       </div>
     </div>
