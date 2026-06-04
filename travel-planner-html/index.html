@@ -402,7 +402,7 @@ async function cloudGet(id) {
 async function cloudSave(id, data) {
   setSyncStatus('syncing');
   try {
-    await fetch(API_URL, { method:'POST', body: JSON.stringify({ id, data }) });
+    await fetch(API_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ id, data }) });
     setSyncStatus('ok');
   } catch { setSyncStatus('error'); }
 }
@@ -439,10 +439,12 @@ async function shareTrip() {
   try {
     await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId) });
     const url = `${location.href.split('?')[0]}?cloud=${currentTripId}`;
-    if (navigator.clipboard) { await navigator.clipboard.writeText(url); showToast('🔗 共編連結已複製！'); }
-    else prompt('複製此連結：', url);
+    try {
+      if (navigator.clipboard) { await navigator.clipboard.writeText(url); showToast('🔗 共編連結已複製！'); }
+      else { prompt('複製此連結傳給旅伴：', url); }
+    } catch { prompt('複製此連結傳給旅伴：', url); }
     setSyncStatus('ok');
-  } catch { showToast('❌ 分享失敗'); setSyncStatus('error'); }
+  } catch(e) { showToast('❌ 分享失敗，請稍後再試'); setSyncStatus('error'); console.error(e); }
 }
 
 function showToast(msg) {
