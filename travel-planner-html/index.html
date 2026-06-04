@@ -143,9 +143,41 @@
     .add-activity-row:hover { border-color: #2d5080; color: #2d5080; background: #eef2f8; }
     .empty-day-msg { text-align: center; color: #bbb; font-size: 13px; padding: 24px 0; }
 
-    /* Expenses tab */
-    .expense-content { flex: 1; overflow-y: auto; padding: 12px 20px 80px; }
-
+    /* Expenses tab - redesign */
+    .expense-content { flex: 1; overflow-y: auto; padding: 0 0 80px; }
+    .exp-subtabs { display: flex; gap: 6px; margin: 14px 20px 12px; background: white; border-radius: 12px; padding: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .exp-subtab { flex: 1; padding: 9px 4px; border: none; border-radius: 8px; background: none; font-size: 13px; font-weight: 600; color: #9a8878; cursor: pointer; transition: all 0.2s; }
+    .exp-subtab.active { background: #4a7a50; color: white; }
+    .exp-total-card { margin: 0 20px 14px; background: #d4a843; border-radius: 16px; padding: 18px 20px 14px; color: white; }
+    .exp-total-lbl { font-size: 12px; opacity: 0.85; margin-bottom: 4px; }
+    .exp-total-amt { font-size: 34px; font-weight: 900; letter-spacing: -1px; margin-bottom: 8px; }
+    .exp-rate-note { font-size: 11px; background: rgba(255,255,255,0.2); border-radius: 8px; padding: 5px 10px; display: inline-flex; align-items: center; gap: 4px; }
+    .exp-filters { display: flex; gap: 6px; padding: 0 20px 12px; overflow-x: auto; scrollbar-width: none; }
+    .exp-filters::-webkit-scrollbar { display: none; }
+    .exp-filter-chip { padding: 5px 13px; border-radius: 20px; border: 1.5px solid #e0d8d0; background: white; font-size: 12px; font-weight: 600; color: #9a8878; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+    .exp-filter-chip.active { background: #4a7a50; color: white; border-color: #4a7a50; }
+    .exp-date-group { padding: 0 20px; }
+    .exp-date-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 6px; }
+    .exp-date-label { font-size: 12px; font-weight: 700; color: #9a8878; }
+    .exp-date-subtotal { font-size: 12px; color: #9a8878; }
+    .exp-item { display: flex; align-items: center; gap: 12px; background: white; border-radius: 14px; padding: 13px 14px; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .exp-item-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #c8a87a, #9a7850); color: white; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+    .exp-item-body { flex: 1; min-width: 0; }
+    .exp-item-desc { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .exp-item-meta { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .exp-item-right { text-align: right; flex-shrink: 0; }
+    .exp-item-amt { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+    .exp-item-converted { font-size: 11px; color: #aaa; margin-top: 1px; }
+    .exp-item-del { background: none; border: none; color: #e0d8d0; cursor: pointer; font-size: 18px; padding: 0 0 0 8px; }
+    .exp-record-form { padding: 0 20px; }
+    .exp-currency-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .exp-currency-sel { flex: 1; padding: 10px 12px; border: 1.5px solid #e0d8d0; border-radius: 10px; font-size: 14px; background: white; color: #333; }
+    .payment-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .payment-chip { padding: 6px 14px; border-radius: 20px; border: 1.5px solid #e0d8d0; background: none; font-size: 13px; color: #555; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+    .payment-chip.sel { background: #4a7a50; color: white; border-color: #4a7a50; }
+    .settlement-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 16px; margin: 0 20px 14px; }
+    .settlement-box h3 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 10px; }
+    .settlement-item { font-size: 13px; color: #b45309; padding: 7px 10px; background: rgba(255,255,255,0.6); border-radius: 8px; margin-bottom: 6px; }
     /* ======= BOTTOM NAV ======= */
     .bottom-nav { background: white; border-top: 1px solid #eee; display: flex; padding-bottom: env(safe-area-inset-bottom); flex-shrink: 0; box-shadow: 0 -2px 12px rgba(0,0,0,0.06); position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 390px; z-index: 100; }
     @media (max-width: 420px) { .bottom-nav { width: 100%; left: 0; transform: none; } }
@@ -399,12 +431,39 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">金額（NT$）</label>
+        <label class="form-label">金額</label>
         <input class="form-input" id="exp-amount" type="number" placeholder="0" />
       </div>
       <div class="form-group">
+        <label class="form-label">幣別</label>
+        <select class="form-input" id="exp-currency">
+          <option value="TWD">TWD 台幣</option>
+          <option value="JPY">JPY 日圓</option>
+          <option value="USD">USD 美金</option>
+          <option value="EUR">EUR 歐元</option>
+          <option value="KRW">KRW 韓元</option>
+          <option value="HKD">HKD 港幣</option>
+          <option value="CNY">CNY 人民幣</option>
+          <option value="GBP">GBP 英鎊</option>
+          <option value="AUD">AUD 澳幣</option>
+          <option value="SGD">SGD 新幣</option>
+          <option value="THB">THB 泰銖</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
         <label class="form-label">日期</label>
         <input class="form-input" id="exp-date" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">付款方式</label>
+        <select class="form-input" id="exp-payment">
+          <option value="信用卡">信用卡</option>
+          <option value="現金">現金</option>
+          <option value="行動支付">行動支付</option>
+          <option value="其他">其他</option>
+        </select>
       </div>
     </div>
     <div class="form-group">
@@ -441,6 +500,25 @@ let isSyncing = false;
 let sharedTripData = null;
 let expPaidBy = '';
 let expParticipants = [];
+let expSubtab = 'detail'; // 'record' | 'detail'
+let expFilterPaidBy = 'all';
+let expFilterPayment = 'all';
+let expFilterDay = 'all';
+
+// 匯率對 TWD（近似值，用戶可實際使用時自動抓取）
+const FX_RATES = { TWD:1, JPY:0.22, USD:32.5, EUR:35.5, KRW:0.024, HKD:4.15, CNY:4.5, GBP:41.5, AUD:21.5, SGD:24.5, THB:0.92 };
+let liveRates = { ...FX_RATES };
+
+async function fetchRates() {
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/TWD');
+    const j = await r.json();
+    if (j.rates) {
+      Object.keys(FX_RATES).forEach(c => { if (c !== 'TWD' && j.rates[c]) liveRates[c] = 1 / j.rates[c]; });
+    }
+  } catch { /* 使用預設值 */ }
+}
+fetchRates();
 
 const catLabel = { attraction:'景點', food:'美食', transport:'交通', accommodation:'住宿', other:'其他' };
 const catEmoji = { attraction:'📷', food:'🍴', transport:'🚗', accommodation:'🏠', other:'📌' };
@@ -911,38 +989,195 @@ function delActivity(actId) {
 }
 
 // ===== 分帳 =====
+function toTWD(amount, currency) {
+  return Math.round(amount * (liveRates[currency] || FX_RATES[currency] || 1));
+}
+
 function renderExpenses() {
   const data = getExpData(currentTripId);
-  const total = data.expenses.reduce((s,e) => s+e.amount, 0);
-  const avg = data.members.length > 0 ? Math.round(total/data.members.length) : 0;
-  let html = `
-    <div class="stat-card">
-      <div class="lbl">總花費</div>
-      <div class="amt">NT$${total.toLocaleString()}</div>
-      ${data.members.length > 0 ? `<div class="avg">每人平均 NT$${avg.toLocaleString()}</div>` : ''}
+  const trip = getTrips().find(t => t.id === currentTripId);
+
+  const subtabsHtml = `
+    <div class="exp-subtabs">
+      <button class="exp-subtab ${expSubtab==='record'?'active':''}" onclick="setExpSubtab('record')">✏️ 記帳</button>
+      <button class="exp-subtab ${expSubtab==='detail'?'active':''}" onclick="setExpSubtab('detail')">🗒 明細</button>
+    </div>`;
+
+  if (expSubtab === 'record') {
+    renderExpRecord(data, trip);
+    return;
+  }
+
+  // 總金額（換算成 TWD）
+  const totalTWD = data.expenses.reduce((s,e) => s + toTWD(e.amount, e.currency||'TWD'), 0);
+
+  // 篩選
+  let filtered = data.expenses;
+  if (expFilterPaidBy !== 'all') filtered = filtered.filter(e => e.paidBy === expFilterPaidBy);
+  if (expFilterPayment !== 'all') filtered = filtered.filter(e => (e.payment||'信用卡') === expFilterPayment);
+  if (expFilterDay !== 'all' && trip) {
+    const dayObj = trip.days[parseInt(expFilterDay)];
+    if (dayObj) filtered = filtered.filter(e => e.date === dayObj.date);
+  }
+
+  // 依日期分組
+  const groups = {};
+  filtered.forEach(e => { (groups[e.date] = groups[e.date]||[]).push(e); });
+  const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+
+  const paymentMethods = ['信用卡','現金','行動支付'];
+  const filterHtml = `
+    <div class="exp-filters">
+      <button class="exp-filter-chip ${expFilterPaidBy==='all'?'active':''}" onclick="setExpFilter('paidby','all')">全體</button>
+      ${data.members.map(m=>`<button class="exp-filter-chip ${expFilterPaidBy===m.name?'active':''}" onclick="setExpFilter('paidby','${m.name}')">${m.name}</button>`).join('')}
     </div>
-    <div class="section-title">旅伴成員</div>
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-      <input class="form-input" id="new-member" placeholder="輸入成員姓名" style="flex:1" onkeydown="if(event.key==='Enter')addMember()" />
-      <button class="btn-submit" style="width:auto;padding:10px 16px" onclick="addMember()">＋</button>
+    <div class="exp-filters" style="padding-top:0">
+      <button class="exp-filter-chip ${expFilterPayment==='all'?'active':''}" onclick="setExpFilter('payment','all')">全部方式</button>
+      ${paymentMethods.map(p=>`<button class="exp-filter-chip ${expFilterPayment===p?'active':''}" onclick="setExpFilter('payment','${p}')">${p}</button>`).join('')}
     </div>
-    <div class="member-chips" style="margin-bottom:16px">${data.members.map(m=>`<div class="member-chip">${m.name}<button onclick="delMember('${m.id}')">×</button></div>`).join('')}</div>
-    <button class="dashed-btn" onclick="openExpenseModal()">＋ 新增費用</button>
-  `;
-  if (data.expenses.length) {
-    html += `<div class="section-title">費用明細</div>`;
-    html += data.expenses.map(e=>`
-      <div class="expense-item">
-        <div><div class="expense-desc">${e.description}</div><div class="expense-meta">${e.paidBy} 付款・${e.participants.join('、')}</div></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="expense-amount">NT$${e.amount.toLocaleString()}</span><button style="background:none;border:none;color:#ddd;cursor:pointer;font-size:16px" onclick="delExpense('${e.id}')">🗑</button></div>
+    <div class="exp-filters" style="padding-top:0">
+      <button class="exp-filter-chip ${expFilterDay==='all'?'active':''}" onclick="setExpFilter('day','all')">全部天</button>
+      ${trip ? trip.days.map((d,i)=>`<button class="exp-filter-chip ${expFilterDay===String(i)?'active':''}" onclick="setExpFilter('day','${i}')">Day${d.day}</button>`).join('') : ''}
+    </div>`;
+
+  let groupsHtml = '';
+  sortedDates.forEach(date => {
+    const items = groups[date];
+    const dayTWD = items.reduce((s,e) => s + toTWD(e.amount, e.currency||'TWD'), 0);
+    const dayLabel = trip ? (() => { const d = trip.days.find(d=>d.date===date); return d ? `Day ${d.day}・${date}` : date; })() : date;
+    groupsHtml += `
+      <div class="exp-date-group">
+        <div class="exp-date-header">
+          <span class="exp-date-label">${dayLabel}</span>
+          <span class="exp-date-subtotal">小計 NT$${dayTWD.toLocaleString()}</span>
+        </div>
+        ${items.map(e => {
+          const twdAmt = toTWD(e.amount, e.currency||'TWD');
+          const showConverted = (e.currency||'TWD') !== 'TWD';
+          return `
+          <div class="exp-item">
+            <div class="exp-item-avatar">${(e.paidBy||'?').charAt(0)}</div>
+            <div class="exp-item-body">
+              <div class="exp-item-desc">${e.description}</div>
+              <div class="exp-item-meta">${e.paidBy}・${e.payment||'信用卡'}</div>
+            </div>
+            <div class="exp-item-right">
+              <div class="exp-item-amt">${e.currency||'TWD'} ${Number(e.amount).toLocaleString()}</div>
+              ${showConverted ? `<div class="exp-item-converted">≈ NT$${twdAmt.toLocaleString()}</div>` : ''}
+            </div>
+            <button class="exp-item-del" onclick="delExpense('${e.id}')">×</button>
+          </div>`;
+        }).join('')}
+      </div>`;
+  });
+
+  if (!filtered.length) groupsHtml = `<p style="color:#bbb;font-size:13px;text-align:center;padding:32px 0">還沒有費用記錄</p>`;
+
+  const settlement = calcSettlement(data.expenses, data.members);
+  const settlementHtml = settlement.length ? `
+    <div class="settlement-box">
+      <h3>💡 結算建議</h3>
+      ${settlement.map(x=>`<div class="settlement-item"><b>${x.from}</b> 付給 <b>${x.to}</b>：NT$${x.amount.toLocaleString()}</div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('expense-content').innerHTML = `
+    ${subtabsHtml}
+    <div class="exp-total-card">
+      <div class="exp-total-lbl">總支出 (TWD)</div>
+      <div class="exp-total-amt">NT$ ${totalTWD.toLocaleString()}</div>
+      <div class="exp-rate-note">🔄 自動根據幣別匯率換算</div>
+    </div>
+    ${filterHtml}
+    ${groupsHtml}
+    ${settlementHtml}`;
+}
+
+function renderExpRecord(data, trip) {
+  const membersExist = data.members.length > 0;
+  document.getElementById('expense-content').innerHTML = `
+    <div class="exp-subtabs">
+      <button class="exp-subtab active" onclick="setExpSubtab('record')">✏️ 記帳</button>
+      <button class="exp-subtab" onclick="setExpSubtab('detail')">🗒 明細</button>
+    </div>
+    <div class="exp-record-form">
+      <div class="form-group">
+        <label class="form-label">費用說明 *</label>
+        <input class="form-input" id="er-desc" placeholder="例如：午餐" />
       </div>
-    `).join('');
-  }
-  const s = calcSettlement(data.expenses, data.members);
-  if (s.length) {
-    html += `<div class="settlement-box"><h3>💡 結算建議</h3>${s.map(x=>`<div class="settlement-item"><b>${x.from}</b> 付給 <b>${x.to}</b>：NT$${x.amount.toLocaleString()}</div>`).join('')}</div>`;
-  }
-  document.getElementById('expense-content').innerHTML = html;
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">金額</label>
+          <input class="form-input" id="er-amount" type="number" placeholder="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">幣別</label>
+          <select class="form-input" id="er-currency">
+            <option value="TWD">TWD</option><option value="JPY">JPY</option><option value="USD">USD</option>
+            <option value="EUR">EUR</option><option value="KRW">KRW</option><option value="HKD">HKD</option>
+            <option value="CNY">CNY</option><option value="GBP">GBP</option><option value="AUD">AUD</option>
+            <option value="SGD">SGD</option><option value="THB">THB</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">日期</label>
+          <input class="form-input" id="er-date" type="date" value="${new Date().toISOString().split('T')[0]}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">付款方式</label>
+          <select class="form-input" id="er-payment">
+            <option>信用卡</option><option>現金</option><option>行動支付</option><option>其他</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">由誰付款</label>
+        <div class="payment-chips" id="er-paidby">
+          ${data.members.map(m=>`<button class="payment-chip" id="erpb-${m.name}" onclick="erSelPaidBy('${m.name}')">${m.name}</button>`).join('')}
+          ${!membersExist ? '<span style="font-size:12px;color:#bbb">請先在成員頁新增旅伴</span>' : ''}
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:10px">
+        <label class="form-label">分攤成員</label>
+        <div class="payment-chips" id="er-participants">
+          ${data.members.map(m=>`<button class="payment-chip" id="erpt-${m.name}" onclick="erTogPart('${m.name}')">${m.name}</button>`).join('')}
+        </div>
+      </div>
+      <button class="btn-submit" onclick="confirmAddExpenseDirect()" style="margin-top:14px">＋ 新增費用</button>
+    </div>`;
+}
+
+function setExpSubtab(tab) { expSubtab = tab; renderExpenses(); }
+function setExpFilter(type, val) {
+  if (type === 'paidby') expFilterPaidBy = val;
+  else if (type === 'payment') expFilterPayment = val;
+  else if (type === 'day') expFilterDay = val;
+  renderExpenses();
+}
+
+let erPaidBy = '', erParticipants = [];
+function erSelPaidBy(name) {
+  erPaidBy = name;
+  document.querySelectorAll('#er-paidby .payment-chip').forEach(el => el.classList.toggle('sel', el.id === 'erpb-'+name));
+}
+function erTogPart(name) {
+  erParticipants = erParticipants.includes(name) ? erParticipants.filter(p=>p!==name) : [...erParticipants,name];
+  const el = document.getElementById('erpt-'+name);
+  if (el) el.classList.toggle('sel', erParticipants.includes(name));
+}
+function confirmAddExpenseDirect() {
+  const desc = document.getElementById('er-desc')?.value.trim();
+  const amount = parseFloat(document.getElementById('er-amount')?.value);
+  const currency = document.getElementById('er-currency')?.value || 'TWD';
+  const payment = document.getElementById('er-payment')?.value || '信用卡';
+  const date = document.getElementById('er-date')?.value;
+  if (!desc||!amount||!erPaidBy||!erParticipants.length) return alert('請填寫所有必填欄位並選擇付款人與分攤成員');
+  const d = getExpData(currentTripId);
+  d.expenses.push({ id: Date.now().toString(), description:desc, amount, currency, payment, paidBy:erPaidBy, participants:[...erParticipants], date });
+  saveExpData(currentTripId, d);
+  erPaidBy = ''; erParticipants = [];
+  setExpSubtab('detail'); saveAndSync();
 }
 
 function addMember() {
@@ -984,9 +1219,11 @@ function togPart(name) {
 function confirmAddExpense() {
   const desc = document.getElementById('exp-desc').value.trim();
   const amount = parseFloat(document.getElementById('exp-amount').value);
+  const currency = document.getElementById('exp-currency')?.value || 'TWD';
+  const payment = document.getElementById('exp-payment')?.value || '信用卡';
   if (!desc||!amount||!expPaidBy||!expParticipants.length) return alert('請填寫所有欄位');
   const d = getExpData(currentTripId);
-  d.expenses.push({ id: Date.now().toString(), description:desc, amount, paidBy:expPaidBy, participants:[...expParticipants], date:document.getElementById('exp-date').value });
+  d.expenses.push({ id: Date.now().toString(), description:desc, amount, currency, payment, paidBy:expPaidBy, participants:[...expParticipants], date:document.getElementById('exp-date').value });
   saveExpData(currentTripId, d); closeExpenseModal(); renderExpenses(); saveAndSync();
 }
 function delExpense(id) {
@@ -997,7 +1234,7 @@ function delExpense(id) {
 }
 function calcSettlement(expenses, members) {
   const b = {}; members.forEach(m => b[m.name]=0);
-  expenses.forEach(e => { const s=e.amount/e.participants.length; e.participants.forEach(p=>{b[p]=(b[p]||0)-s;}); b[e.paidBy]=(b[e.paidBy]||0)+e.amount; });
+  expenses.forEach(e => { const amt = toTWD(e.amount, e.currency||'TWD'); const s=amt/e.participants.length; e.participants.forEach(p=>{b[p]=(b[p]||0)-s;}); b[e.paidBy]=(b[e.paidBy]||0)+amt; });
   const res=[], d=Object.entries(b).filter(([,v])=>v<-0.01).sort(([,a],[,b])=>a-b).map(([n,v])=>({name:n,amount:-v})), c=Object.entries(b).filter(([,v])=>v>0.01).sort(([,a],[,b])=>b-a).map(([n,v])=>({name:n,amount:v}));
   let di=0,ci=0; while(di<d.length&&ci<c.length){const p=Math.min(d[di].amount,c[ci].amount);res.push({from:d[di].name,to:c[ci].name,amount:Math.round(p)});d[di].amount-=p;c[ci].amount-=p;if(d[di].amount<0.01)di++;if(c[ci].amount<0.01)ci++;}
   return res;
