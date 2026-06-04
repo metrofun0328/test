@@ -266,6 +266,49 @@
     .join-modal input { width: 100%; padding: 13px 16px; border: 1.5px solid #e0d8d0; border-radius: 12px; font-size: 16px; text-align: center; background: white; box-sizing: border-box; margin-bottom: 14px; }
     .join-modal button { width: 100%; padding: 13px; background: #2d5080; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
 
+    /* ======= BOOKING TAB ======= */
+    .booking-content { flex: 1; overflow-y: auto; padding: 0 0 80px; }
+    .booking-subtabs { display: flex; gap: 0; margin: 14px 20px 16px; background: white; border-radius: 14px; padding: 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+    .booking-subtab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border: none; border-radius: 10px; background: none; font-size: 11px; font-weight: 600; color: #9a8878; cursor: pointer; transition: all 0.2s; }
+    .booking-subtab .bst-icon { font-size: 22px; line-height: 1; }
+    .booking-subtab.active { background: #f5e8d8; color: #2d5080; }
+
+    /* 機票 boarding pass */
+    .flight-total-card { margin: 0 20px 14px; background: linear-gradient(135deg, #7a9a60, #5a7a44); border-radius: 16px; padding: 16px 20px; color: white; display: flex; align-items: center; justify-content: space-between; }
+    .flight-total-lbl { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
+    .flight-total-amt { font-size: 28px; font-weight: 900; }
+    .boarding-pass { margin: 0 20px 14px; background: #f0c040; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .bp-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 8px; }
+    .bp-airline { font-size: 13px; font-weight: 700; color: #5a4010; display: flex; align-items: center; gap: 6px; }
+    .bp-badge { background: #5a4010; color: #f0c040; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px; }
+    .bp-members { font-size: 11px; color: #7a6020; }
+    .bp-body { background: white; margin: 0 12px; border-radius: 12px; padding: 14px 16px; }
+    .bp-route { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .bp-airport { text-align: center; }
+    .bp-code { font-size: 32px; font-weight: 900; color: #1a1a1a; letter-spacing: -1px; }
+    .bp-city { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .bp-arrow { font-size: 20px; color: #f0c040; flex-shrink: 0; }
+    .bp-divider { border: none; border-top: 1.5px dashed #e8e0d8; margin: 0 0 12px; }
+    .bp-info-row { display: flex; gap: 16px; }
+    .bp-info-cell { flex: 1; }
+    .bp-info-lbl { font-size: 10px; color: #aaa; margin-bottom: 3px; }
+    .bp-info-val { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    .bp-info-val.red { color: #e57373; }
+    .bp-footer { padding: 10px 16px 14px; display: flex; justify-content: flex-end; }
+    .bp-del-btn { background: none; border: none; color: rgba(90,64,16,0.4); cursor: pointer; font-size: 16px; }
+
+    /* 住宿/租車/票券卡片 */
+    .booking-card { margin: 0 20px 10px; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+    .bc-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    .bc-icon { font-size: 28px; margin-right: 12px; flex-shrink: 0; }
+    .bc-title { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+    .bc-sub { font-size: 12px; color: #aaa; margin-top: 3px; }
+    .bc-price { font-size: 14px; font-weight: 700; color: #4a7a50; margin-top: 6px; }
+    .bc-note { font-size: 12px; color: #888; margin-top: 6px; background: #f8f6f3; border-radius: 8px; padding: 6px 10px; }
+    .bc-members { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .bc-member-chip { font-size: 11px; background: #dce8f5; color: #2d5080; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+    .bc-del-btn { background: none; border: none; color: #e0d8d0; cursor: pointer; font-size: 18px; flex-shrink: 0; }
+
     /* Toast */
     .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 999; animation: fadeInUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); white-space: nowrap; }
     @keyframes fadeInUp { from { opacity:0; transform: translate(-50%,10px); } to { opacity:1; transform: translate(-50%,0); } }
@@ -364,6 +407,10 @@
     <div class="prep-content" id="prep-content"></div>
   </div>
 
+  <div id="tab-booking" class="hidden" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+    <div class="booking-content" id="booking-content"></div>
+  </div>
+
   <!-- 底部導航 -->
   <div class="bottom-nav">
     <button class="nav-item active" id="nav-itinerary" onclick="switchTab('itinerary')">
@@ -373,7 +420,10 @@
       <span class="nav-item-icon">✅</span>準備
     </button>
     <button class="nav-item" id="nav-expenses" onclick="switchTab('expenses')">
-      <span class="nav-item-icon">💰</span>分帳
+      <span class="nav-item-icon">💰</span>記帳
+    </button>
+    <button class="nav-item" id="nav-booking" onclick="switchTab('booking')">
+      <span class="nav-item-icon">🎫</span>預訂
     </button>
     <button class="nav-item" id="nav-members" onclick="switchToMembers()">
       <span class="nav-item-icon">👥</span>成員
@@ -494,6 +544,140 @@
   </div>
 </div>
 
+<!-- ===== 新增機票 Modal ===== -->
+<div id="modal-flight" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>✈️ 新增機票</h3><button class="form-close" onclick="closeBookingModal('flight')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">航空公司 / 航班號</label>
+      <div class="form-row" style="margin:0">
+        <input class="form-input" id="fl-airline" placeholder="例如：台灣虎航" style="flex:1.2" />
+        <input class="form-input" id="fl-flightno" placeholder="IT262" style="flex:0.8" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">出發機場代碼</label>
+        <input class="form-input" id="fl-from-code" placeholder="KHH" maxlength="4" style="text-transform:uppercase" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">出發城市</label>
+        <input class="form-input" id="fl-from-city" placeholder="高雄小港" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">抵達機場代碼</label>
+        <input class="form-input" id="fl-to-code" placeholder="OKJ" maxlength="4" style="text-transform:uppercase" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">抵達城市</label>
+        <input class="form-input" id="fl-to-city" placeholder="岡山桃太郎" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">出發時間</label>
+        <input class="form-input" id="fl-depart" type="time" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">抵達時間</label>
+        <input class="form-input" id="fl-arrive" type="time" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">日期</label>
+        <input class="form-input" id="fl-date" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">託運行李</label>
+        <input class="form-input" id="fl-baggage" placeholder="例如：20kg" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">金額</label>
+        <input class="form-input" id="fl-price" type="number" placeholder="0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">幣別</label>
+        <select class="form-input" id="fl-currency">
+          <option value="TWD">TWD</option><option value="JPY">JPY</option><option value="USD">USD</option><option value="EUR">EUR</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">適用成員</label>
+      <div class="toggle-chips" id="fl-members-chips"></div>
+    </div>
+    <button class="btn-submit" onclick="confirmAddBooking('flight')" style="margin-top:6px">新增機票</button>
+  </div>
+</div>
+
+<!-- ===== 新增住宿 Modal ===== -->
+<div id="modal-hotel" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>🏨 新增住宿</h3><button class="form-close" onclick="closeBookingModal('hotel')">✕</button></div>
+    <div class="form-group"><label class="form-label">住宿名稱 *</label><input class="form-input" id="ht-name" placeholder="例如：廣島 APA Hotel" /></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">入住日期</label><input class="form-input" id="ht-checkin" type="date" /></div>
+      <div class="form-group"><label class="form-label">退房日期</label><input class="form-input" id="ht-checkout" type="date" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">金額</label><input class="form-input" id="ht-price" type="number" placeholder="0" /></div>
+      <div class="form-group"><label class="form-label">幣別</label>
+        <select class="form-input" id="ht-currency"><option value="TWD">TWD</option><option value="JPY">JPY</option><option value="USD">USD</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">備註</label><input class="form-input" id="ht-note" placeholder="地址、訂房號..." /></div>
+    <div class="form-group"><label class="form-label">適用成員</label><div class="toggle-chips" id="ht-members-chips"></div></div>
+    <button class="btn-submit" onclick="confirmAddBooking('hotel')" style="margin-top:6px">新增住宿</button>
+  </div>
+</div>
+
+<!-- ===== 新增租車 Modal ===== -->
+<div id="modal-car" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>🚗 新增租車</h3><button class="form-close" onclick="closeBookingModal('car')">✕</button></div>
+    <div class="form-group"><label class="form-label">租車公司 / 車型 *</label><input class="form-input" id="car-name" placeholder="例如：Toyota RAV4" /></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">取車日期</label><input class="form-input" id="car-pickup" type="date" /></div>
+      <div class="form-group"><label class="form-label">還車日期</label><input class="form-input" id="car-dropoff" type="date" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">金額</label><input class="form-input" id="car-price" type="number" placeholder="0" /></div>
+      <div class="form-group"><label class="form-label">幣別</label>
+        <select class="form-input" id="car-currency"><option value="TWD">TWD</option><option value="JPY">JPY</option><option value="USD">USD</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">備註</label><input class="form-input" id="car-note" placeholder="取車地點、預約號..." /></div>
+    <div class="form-group"><label class="form-label">適用成員</label><div class="toggle-chips" id="car-members-chips"></div></div>
+    <button class="btn-submit" onclick="confirmAddBooking('car')" style="margin-top:6px">新增租車</button>
+  </div>
+</div>
+
+<!-- ===== 新增票券 Modal ===== -->
+<div id="modal-ticket" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h3>🎟 新增票券</h3><button class="form-close" onclick="closeBookingModal('ticket')">✕</button></div>
+    <div class="form-group"><label class="form-label">票券名稱 *</label><input class="form-input" id="tk-name" placeholder="例如：廣島一日乘車券" /></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">使用日期</label><input class="form-input" id="tk-date" type="date" /></div>
+      <div class="form-group"><label class="form-label">數量</label><input class="form-input" id="tk-qty" type="number" placeholder="1" value="1" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">金額</label><input class="form-input" id="tk-price" type="number" placeholder="0" /></div>
+      <div class="form-group"><label class="form-label">幣別</label>
+        <select class="form-input" id="tk-currency"><option value="TWD">TWD</option><option value="JPY">JPY</option><option value="USD">USD</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">備註</label><input class="form-input" id="tk-note" placeholder="兌換方式、使用須知..." /></div>
+    <div class="form-group"><label class="form-label">適用成員</label><div class="toggle-chips" id="tk-members-chips"></div></div>
+    <button class="btn-submit" onclick="confirmAddBooking('ticket')" style="margin-top:6px">新增票券</button>
+  </div>
+</div>
+
 <script>
 // ===== 設定 =====
 const API_URL = 'https://script.google.com/macros/s/AKfycbzrBFPip1ByJlVCN814h2y1maggzrXpwOOnbqUd7gsypnyBgF_ScGx_hzkEZad-Fxou/exec';
@@ -562,7 +746,7 @@ async function cloudSave(id, data) {
 async function saveAndSync() {
   if (!isCloudTrip) return;
   const trip = getTrips().find(t => t.id === currentTripId);
-  await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId), prepData: getPrepData(currentTripId) });
+  await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId), prepData: getPrepData(currentTripId), bookingData: getBookingData(currentTripId) });
 }
 async function syncFromCloud() {
   if (isSyncing || !isCloudTrip) return;
@@ -573,16 +757,19 @@ async function syncFromCloud() {
     const idx = trips.findIndex(t => t.id === currentTripId);
     const localExpData = getExpData(currentTripId);
     const localPrepData = getPrepData(currentTripId);
+    const localBookingData = getBookingData(currentTripId);
     const tripChanged = JSON.stringify(trips[idx]) !== JSON.stringify(remote.trip);
     const expChanged = remote.expData && JSON.stringify(localExpData) !== JSON.stringify(remote.expData);
     const prepChanged = remote.prepData && JSON.stringify(localPrepData) !== JSON.stringify(remote.prepData);
-    if (tripChanged || expChanged || prepChanged) {
+    const bookingChanged = remote.bookingData && JSON.stringify(localBookingData) !== JSON.stringify(remote.bookingData);
+    if (tripChanged || expChanged || prepChanged || bookingChanged) {
       if (tripChanged) {
         if (idx >= 0) trips[idx] = remote.trip; else trips.unshift(remote.trip);
         saveTrips(trips);
       }
       if (expChanged) saveExpData(currentTripId, remote.expData);
       if (prepChanged) savePrepData(currentTripId, remote.prepData);
+      if (bookingChanged) saveBookingData(currentTripId, remote.bookingData);
       renderDayContent();
       const membersTab = document.getElementById('tab-members');
       if (membersTab && !membersTab.classList.contains('hidden')) renderMembers();
@@ -590,6 +777,8 @@ async function syncFromCloud() {
       if (expTab && !expTab.classList.contains('hidden')) renderExpenses();
       const prepTab = document.getElementById('tab-prep');
       if (prepTab && !prepTab.classList.contains('hidden')) renderPrep();
+      const bookingTab = document.getElementById('tab-booking');
+      if (bookingTab && !bookingTab.classList.contains('hidden')) renderBooking();
       setSyncStatus('ok');
     }
   }
@@ -604,7 +793,7 @@ async function shareTrip() {
   if (!trip) return;
   setSyncStatus('syncing');
   try {
-    await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId), prepData: getPrepData(currentTripId) });
+    await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId), prepData: getPrepData(currentTripId), bookingData: getBookingData(currentTripId) });
     const url = `${location.href.split('?')[0]}?cloud=${currentTripId}`;
     try {
       if (navigator.clipboard) { await navigator.clipboard.writeText(url); showToast('🔗 共編連結已複製！'); }
@@ -642,6 +831,7 @@ async function loadCloudTrip(cloudId) {
   saveTrips(trips);
   if (remote.expData) saveExpData(cloudId, remote.expData);
   if (remote.prepData) savePrepData(cloudId, remote.prepData);
+  if (remote.bookingData) saveBookingData(cloudId, remote.bookingData);
   history.replaceState({}, '', location.pathname);
   showToast('✅ 共享行程已載入！');
   renderHome(); openTrip(cloudId, true);
@@ -757,7 +947,7 @@ function goHome() {
 }
 
 function switchTab(tab) {
-  ['itinerary','expenses','members','prep'].forEach(t => {
+  ['itinerary','expenses','members','prep','booking'].forEach(t => {
     document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
     document.getElementById('nav-' + t)?.classList.toggle('active', t === tab);
   });
@@ -767,6 +957,7 @@ function switchTab(tab) {
   else if (tab === 'expenses') renderExpenses();
   else if (tab === 'members') renderMembers();
   else if (tab === 'prep') renderPrep();
+  else if (tab === 'booking') renderBooking();
 }
 function switchToMembers() { switchTab('members'); }
 
@@ -1271,6 +1462,200 @@ function calcSettlement(expenses, members) {
   const res=[], d=Object.entries(b).filter(([,v])=>v<-0.01).sort(([,a],[,b])=>a-b).map(([n,v])=>({name:n,amount:-v})), c=Object.entries(b).filter(([,v])=>v>0.01).sort(([,a],[,b])=>b-a).map(([n,v])=>({name:n,amount:v}));
   let di=0,ci=0; while(di<d.length&&ci<c.length){const p=Math.min(d[di].amount,c[ci].amount);res.push({from:d[di].name,to:c[ci].name,amount:Math.round(p)});d[di].amount-=p;c[ci].amount-=p;if(d[di].amount<0.01)di++;if(c[ci].amount<0.01)ci++;}
   return res;
+}
+
+// ===== 預訂 =====
+let bookingSubtab = 'flight';
+
+const getBookingData = id => JSON.parse(localStorage.getItem('booking_' + id) || '{"flight":[],"hotel":[],"car":[],"ticket":[]}');
+const saveBookingData = (id, d) => localStorage.setItem('booking_' + id, JSON.stringify(d));
+
+const bookingSubtabInfo = [
+  { key: 'flight', icon: '✈️', label: '機票' },
+  { key: 'hotel',  icon: '🏨', label: '住宿' },
+  { key: 'car',    icon: '🚗', label: '租車' },
+  { key: 'ticket', icon: '🎟', label: '票券' },
+];
+
+function renderBooking() {
+  const data = getBookingData(currentTripId);
+  const members = getExpData(currentTripId).members;
+
+  const subtabsHtml = `<div class="booking-subtabs">${
+    bookingSubtabInfo.map(s => `
+      <button class="booking-subtab ${bookingSubtab===s.key?'active':''}" onclick="setBookingSubtab('${s.key}')">
+        <span class="bst-icon">${s.icon}</span>${s.label}
+      </button>`).join('')
+  }</div>`;
+
+  let contentHtml = '';
+
+  if (bookingSubtab === 'flight') {
+    const flights = data.flight || [];
+    const totalTWD = flights.reduce((s,f) => s + toTWD(f.price||0, f.currency||'TWD') * (f.members?.length||1), 0);
+    contentHtml += `
+      <div class="flight-total-card">
+        <div><div class="flight-total-lbl">機票總金額</div><div class="flight-total-amt">${totalTWD.toLocaleString()}</div></div>
+        <span style="font-size:36px;opacity:0.4">✈️</span>
+      </div>`;
+    if (!flights.length) contentHtml += `<p style="color:#bbb;text-align:center;padding:24px 0;font-size:13px">還沒有機票，點下方新增</p>`;
+    flights.forEach(f => {
+      contentHtml += `
+        <div class="boarding-pass">
+          <div class="bp-header">
+            <div class="bp-airline">✈️ ${f.airline} ${f.flightNo} <span class="bp-badge">BOARDING PASS</span></div>
+            <button class="bp-del-btn" onclick="delBooking('flight','${f.id}')">×</button>
+          </div>
+          <div style="padding:0 12px 4px;font-size:11px;color:#7a6020">${f.members?.join('、')||''}</div>
+          <div class="bp-body">
+            <div class="bp-route">
+              <div class="bp-airport"><div class="bp-code">${f.fromCode||''}</div><div class="bp-city">${f.fromCity||''}</div></div>
+              <div class="bp-arrow">✈</div>
+              <div class="bp-airport" style="text-align:right"><div class="bp-code">${f.toCode||''}</div><div class="bp-city">${f.toCity||''}</div></div>
+            </div>
+            <hr class="bp-divider">
+            <div class="bp-info-row">
+              <div class="bp-info-cell"><div class="bp-info-lbl">出發</div><div class="bp-info-val">${f.depart||''}</div></div>
+              <div class="bp-info-cell"><div class="bp-info-lbl">抵達</div><div class="bp-info-val red">${f.arrive||''}</div></div>
+              ${f.baggage ? `<div class="bp-info-cell"><div class="bp-info-lbl">託運</div><div class="bp-info-val">${f.baggage}</div></div>` : ''}
+              ${f.price ? `<div class="bp-info-cell"><div class="bp-info-lbl">金額</div><div class="bp-info-val">${f.currency||'TWD'} ${Number(f.price).toLocaleString()}</div></div>` : ''}
+            </div>
+          </div>
+          <div class="bp-footer"><span style="font-size:11px;color:#7a6020">${f.date||''}</span></div>
+        </div>`;
+    });
+    contentHtml += `<div style="padding:0 20px"><button class="dashed-btn" onclick="openBookingModal('flight')">＋ 新增機票</button></div>`;
+
+  } else if (bookingSubtab === 'hotel') {
+    const hotels = data.hotel || [];
+    if (!hotels.length) contentHtml += `<p style="color:#bbb;text-align:center;padding:24px 0;font-size:13px">還沒有住宿，點下方新增</p>`;
+    hotels.forEach(h => {
+      contentHtml += `<div class="booking-card">
+        <div class="bc-header">
+          <div style="display:flex;align-items:flex-start">
+            <span class="bc-icon">🏨</span>
+            <div><div class="bc-title">${h.name}</div><div class="bc-sub">入住 ${h.checkin||''} ～ 退房 ${h.checkout||''}</div>
+            ${h.price ? `<div class="bc-price">${h.currency||'TWD'} ${Number(h.price).toLocaleString()}</div>` : ''}</div>
+          </div>
+          <button class="bc-del-btn" onclick="delBooking('hotel','${h.id}')">×</button>
+        </div>
+        ${h.note ? `<div class="bc-note">${h.note}</div>` : ''}
+        ${h.members?.length ? `<div class="bc-members">${h.members.map(m=>`<span class="bc-member-chip">${m}</span>`).join('')}</div>` : ''}
+      </div>`;
+    });
+    contentHtml += `<div style="padding:0 20px"><button class="dashed-btn" onclick="openBookingModal('hotel')">＋ 新增住宿</button></div>`;
+
+  } else if (bookingSubtab === 'car') {
+    const cars = data.car || [];
+    if (!cars.length) contentHtml += `<p style="color:#bbb;text-align:center;padding:24px 0;font-size:13px">還沒有租車，點下方新增</p>`;
+    cars.forEach(c => {
+      contentHtml += `<div class="booking-card">
+        <div class="bc-header">
+          <div style="display:flex;align-items:flex-start">
+            <span class="bc-icon">🚗</span>
+            <div><div class="bc-title">${c.name}</div><div class="bc-sub">取車 ${c.pickup||''} ～ 還車 ${c.dropoff||''}</div>
+            ${c.price ? `<div class="bc-price">${c.currency||'TWD'} ${Number(c.price).toLocaleString()}</div>` : ''}</div>
+          </div>
+          <button class="bc-del-btn" onclick="delBooking('car','${c.id}')">×</button>
+        </div>
+        ${c.note ? `<div class="bc-note">${c.note}</div>` : ''}
+        ${c.members?.length ? `<div class="bc-members">${c.members.map(m=>`<span class="bc-member-chip">${m}</span>`).join('')}</div>` : ''}
+      </div>`;
+    });
+    contentHtml += `<div style="padding:0 20px"><button class="dashed-btn" onclick="openBookingModal('car')">＋ 新增租車</button></div>`;
+
+  } else if (bookingSubtab === 'ticket') {
+    const tickets = data.ticket || [];
+    if (!tickets.length) contentHtml += `<p style="color:#bbb;text-align:center;padding:24px 0;font-size:13px">還沒有票券，點下方新增</p>`;
+    tickets.forEach(t => {
+      contentHtml += `<div class="booking-card">
+        <div class="bc-header">
+          <div style="display:flex;align-items:flex-start">
+            <span class="bc-icon">🎟</span>
+            <div><div class="bc-title">${t.name}</div><div class="bc-sub">${t.date||''} ${t.qty > 1 ? `× ${t.qty}張` : ''}</div>
+            ${t.price ? `<div class="bc-price">${t.currency||'TWD'} ${Number(t.price).toLocaleString()}</div>` : ''}</div>
+          </div>
+          <button class="bc-del-btn" onclick="delBooking('ticket','${t.id}')">×</button>
+        </div>
+        ${t.note ? `<div class="bc-note">${t.note}</div>` : ''}
+        ${t.members?.length ? `<div class="bc-members">${t.members.map(m=>`<span class="bc-member-chip">${m}</span>`).join('')}</div>` : ''}
+      </div>`;
+    });
+    contentHtml += `<div style="padding:0 20px"><button class="dashed-btn" onclick="openBookingModal('ticket')">＋ 新增票券</button></div>`;
+  }
+
+  document.getElementById('booking-content').innerHTML = subtabsHtml + contentHtml;
+}
+
+function setBookingSubtab(key) { bookingSubtab = key; renderBooking(); }
+
+let bookingMembersSelected = [];
+function openBookingModal(type) {
+  const members = getExpData(currentTripId).members;
+  bookingMembersSelected = members.map(m => m.name);
+  const chipsId = { flight:'fl-members-chips', hotel:'ht-members-chips', car:'car-members-chips', ticket:'tk-members-chips' }[type];
+  document.getElementById('modal-' + type).classList.remove('hidden');
+  setTimeout(() => {
+    const el = document.getElementById(chipsId);
+    if (el) el.innerHTML = members.map(m => `<button class="toggle-chip sel-blue" id="bm-${m.name}" onclick="togBookingMember('${m.name}','${chipsId}')">${m.name}</button>`).join('');
+    if (type === 'flight') {
+      document.getElementById('fl-date').value = new Date().toISOString().split('T')[0];
+    }
+  }, 50);
+}
+function closeBookingModal(type) { document.getElementById('modal-' + type).classList.add('hidden'); }
+function togBookingMember(name, chipsId) {
+  bookingMembersSelected = bookingMembersSelected.includes(name)
+    ? bookingMembersSelected.filter(m => m !== name)
+    : [...bookingMembersSelected, name];
+  const el = document.getElementById('bm-' + name);
+  if (el) el.className = 'toggle-chip' + (bookingMembersSelected.includes(name) ? ' sel-blue' : '');
+}
+
+function confirmAddBooking(type) {
+  const d = getBookingData(currentTripId);
+  let item = { id: Date.now().toString(), members: [...bookingMembersSelected] };
+  if (type === 'flight') {
+    item = { ...item,
+      airline: document.getElementById('fl-airline').value.trim(),
+      flightNo: document.getElementById('fl-flightno').value.trim(),
+      fromCode: document.getElementById('fl-from-code').value.trim().toUpperCase(),
+      fromCity: document.getElementById('fl-from-city').value.trim(),
+      toCode: document.getElementById('fl-to-code').value.trim().toUpperCase(),
+      toCity: document.getElementById('fl-to-city').value.trim(),
+      depart: document.getElementById('fl-depart').value,
+      arrive: document.getElementById('fl-arrive').value,
+      date: document.getElementById('fl-date').value,
+      baggage: document.getElementById('fl-baggage').value.trim(),
+      price: parseFloat(document.getElementById('fl-price').value) || 0,
+      currency: document.getElementById('fl-currency').value,
+    };
+    if (!item.fromCode || !item.toCode) return alert('請填寫出發與抵達機場代碼');
+  } else if (type === 'hotel') {
+    item = { ...item, name: document.getElementById('ht-name').value.trim(), checkin: document.getElementById('ht-checkin').value, checkout: document.getElementById('ht-checkout').value, price: parseFloat(document.getElementById('ht-price').value)||0, currency: document.getElementById('ht-currency').value, note: document.getElementById('ht-note').value.trim() };
+    if (!item.name) return alert('請填寫住宿名稱');
+  } else if (type === 'car') {
+    item = { ...item, name: document.getElementById('car-name').value.trim(), pickup: document.getElementById('car-pickup').value, dropoff: document.getElementById('car-dropoff').value, price: parseFloat(document.getElementById('car-price').value)||0, currency: document.getElementById('car-currency').value, note: document.getElementById('car-note').value.trim() };
+    if (!item.name) return alert('請填寫租車資訊');
+  } else if (type === 'ticket') {
+    item = { ...item, name: document.getElementById('tk-name').value.trim(), date: document.getElementById('tk-date').value, qty: parseInt(document.getElementById('tk-qty').value)||1, price: parseFloat(document.getElementById('tk-price').value)||0, currency: document.getElementById('tk-currency').value, note: document.getElementById('tk-note').value.trim() };
+    if (!item.name) return alert('請填寫票券名稱');
+  }
+  if (!d[type]) d[type] = [];
+  d[type].push(item);
+  saveBookingData(currentTripId, d);
+  closeBookingModal(type);
+  renderBooking();
+  saveAndSync();
+}
+
+function delBooking(type, id) {
+  if (!confirm('確定刪除？')) return;
+  const d = getBookingData(currentTripId);
+  d[type] = d[type].filter(i => i.id !== id);
+  saveBookingData(currentTripId, d);
+  renderBooking();
+  saveAndSync();
 }
 
 // ===== 初始化 =====
