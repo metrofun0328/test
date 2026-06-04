@@ -443,11 +443,20 @@ async function syncFromCloud() {
   if (remote?.trip) {
     const trips = getTrips();
     const idx = trips.findIndex(t => t.id === currentTripId);
-    if (JSON.stringify(trips[idx]) !== JSON.stringify(remote.trip)) {
-      if (idx >= 0) trips[idx] = remote.trip; else trips.unshift(remote.trip);
-      saveTrips(trips);
-      if (remote.expData) saveExpData(currentTripId, remote.expData);
+    const localExpData = getExpData(currentTripId);
+    const tripChanged = JSON.stringify(trips[idx]) !== JSON.stringify(remote.trip);
+    const expChanged = remote.expData && JSON.stringify(localExpData) !== JSON.stringify(remote.expData);
+    if (tripChanged || expChanged) {
+      if (tripChanged) {
+        if (idx >= 0) trips[idx] = remote.trip; else trips.unshift(remote.trip);
+        saveTrips(trips);
+      }
+      if (expChanged) saveExpData(currentTripId, remote.expData);
       renderDayContent();
+      const membersTab = document.getElementById('tab-members');
+      if (membersTab && !membersTab.classList.contains('hidden')) renderMembers();
+      const expTab = document.getElementById('tab-expenses');
+      if (expTab && !expTab.classList.contains('hidden')) renderExpenses();
       setSyncStatus('ok');
     }
   }
