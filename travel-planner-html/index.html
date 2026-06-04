@@ -132,6 +132,12 @@
     .tag-other { background: #dce4f0; color: #4060a0; }
     .activity-detail-loc { font-size: 12px; color: #6080b0; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; margin-bottom: 4px; }
     .activity-detail-loc:hover { text-decoration: underline; }
+    .map-card { display: flex; align-items: center; gap: 10px; background: #f8f6f3; border: 1px solid #e8e0d8; border-radius: 12px; padding: 10px 12px; margin: 6px 0; text-decoration: none; }
+    .map-card-icon { font-size: 20px; flex-shrink: 0; }
+    .map-card-body { flex: 1; min-width: 0; }
+    .map-card-title { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+    .map-card-sub { font-size: 11px; color: #aaa; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .map-card-btn { background: #4a7a50; color: white; border: none; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
     .activity-detail-desc { font-size: 12px; color: #888; margin-bottom: 4px; }
     .activity-detail-cost { font-size: 12px; color: #2d5080; font-weight: 600; }
     .activity-detail-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
@@ -404,7 +410,17 @@
     </div>
     <div class="form-group">
       <label class="form-label">地點</label>
-      <input class="form-input" id="act-location" placeholder="可搜尋 Google Maps" />
+      <input class="form-input" id="act-location" placeholder="輸入地點名稱，點擊可開啟 Google Maps" oninput="previewMapCard(this.value)" />
+      <div id="map-preview" style="display:none;margin-top:6px">
+        <div class="map-card" style="cursor:default">
+          <span class="map-card-icon">📍</span>
+          <div class="map-card-body">
+            <div class="map-card-title">Google 地圖</div>
+            <div class="map-card-sub" id="map-preview-text"></div>
+          </div>
+          <span class="map-card-btn" style="background:#aaa">預覽</span>
+        </div>
+      </div>
     </div>
     <div class="form-group">
       <label class="form-label">備註</label>
@@ -941,10 +957,18 @@ function renderDayContent() {
           <span class="activity-chevron" id="chev-${a.id}">▼</span>
         </div>
         <div class="activity-detail hidden" id="detail-${a.id}">
-          <span class="activity-detail-tag ${tagClass[a.category]}">${catEmoji[a.category]} ${catLabel[a.category]}</span><br>
-          ${a.location ? `<a class="activity-detail-loc" href="https://www.google.com/maps/search/${encodeURIComponent(a.location)}" target="_blank">📍 ${a.location} ↗</a><br>` : ''}
+          <span class="activity-detail-tag ${tagClass[a.category]}">${catEmoji[a.category]} ${catLabel[a.category]}</span>
           ${a.description ? `<div class="activity-detail-desc">${a.description}</div>` : ''}
           ${a.estimatedCost > 0 ? `<div class="activity-detail-cost">💰 NT$${a.estimatedCost.toLocaleString()}</div>` : ''}
+          ${a.location ? `
+            <a class="map-card" href="https://www.google.com/maps/search/${encodeURIComponent(a.location)}" target="_blank">
+              <span class="map-card-icon">📍</span>
+              <div class="map-card-body">
+                <div class="map-card-title">Google 地圖</div>
+                <div class="map-card-sub">${a.location}</div>
+              </div>
+              <span class="map-card-btn">🗺 開啟</span>
+            </a>` : ''}
           ${editMode ? `<div class="activity-detail-actions"><button class="btn-del-activity" onclick="delActivity('${a.id}')">刪除</button></div>` : ''}
         </div>
       </div>
@@ -971,7 +995,16 @@ function openActivityModal(idx) {
   document.getElementById('act-category').value = 'attraction';
   document.getElementById('modal-activity').classList.remove('hidden');
 }
-function closeActivityModal() { document.getElementById('modal-activity').classList.add('hidden'); }
+function closeActivityModal() {
+  document.getElementById('modal-activity').classList.add('hidden');
+  document.getElementById('map-preview').style.display = 'none';
+}
+function previewMapCard(val) {
+  const preview = document.getElementById('map-preview');
+  const text = document.getElementById('map-preview-text');
+  if (val.trim()) { preview.style.display = 'block'; text.textContent = val.trim(); }
+  else { preview.style.display = 'none'; }
+}
 function confirmAddActivity() {
   const title = document.getElementById('act-title').value.trim();
   if (!title) return alert('請填寫活動名稱');
