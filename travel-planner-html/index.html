@@ -316,6 +316,9 @@
 </div>
 
 <script>
+// =================== 設定 ===================
+const API_URL = 'https://script.google.com/macros/s/AKfycbzrBFPip1ByJlVCN814h2y1maggzrXpwOOnbqUd7gsypnyBgF_ScGx_hzkEZad-Fxou/exec';
+
 // =================== 資料 ===================
 function getTrips() { return JSON.parse(localStorage.getItem('trips') || '[]'); }
 function saveTrips(t) { localStorage.setItem('trips', JSON.stringify(t)); }
@@ -327,18 +330,100 @@ let addingDayIndex = null;
 let expPaidBy = '';
 let expParticipants = [];
 let sharedTripData = null;
+let syncInterval = null;
+let isSyncing = false;
+let isCloudTrip = false;
 
-// =================== 分享 / 匯入 ===================
-function shareTrip() {
-  const trips = getTrips();
-  const trip = trips.find(t => t.id === currentTripId);
+// =================== 同步狀態 ===================
+function setSyncStatus(status) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  const map = {
+    syncing:  '🔄 同步中...',
+    ok:       '✅ 已同步',
+    error:    '❌ 同步失敗',
+    offline:  '📴 離線模式',
+  };
+  el.textContent = map[status] || '';
+}
+
+// =================== 雲端讀寫 ===================
+async function cloudGet(tripId) {
+  try {
+    const res = await fetch(`${API_URL}?action=get&id=${tripId}`);
+    const text = await res.text();
+    return JSON.parse(text);
+  } catch(e) { return null; }
+}
+
+async function cloudSave(tripId, data) {
+  setSyncStatus('syncing');
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ id: tripId, data }),
+    });
+    setSyncStatus('ok');
+  } catch(e) {
+    setSyncStatus('error');
+  }
+}
+
+async function syncFromCloud() {
+  if (isSyncing || !isCloudTrip) return;
+  isSyncing = true;
+  const remote = await cloudGet(currentTripId);
+  if (remote) {
+    const trips = getTrips();
+    const idx = trips.findIndex(t => t.id === currentTripId);
+    const localStr = idx >= 0 ? JSON.stringify(trips[idx]) : '';
+    const remoteStr = JSON.stringify(remote.trip);
+    if (localStr !== remoteStr) {
+      if (idx >= 0) trips[idx] = remote.trip;
+      else trips.unshift(remote.trip);
+      saveTrips(trips);
+      if (remote.expData) saveExpenseData(currentTripId, remote.expData);
+      renderItinerary();
+      setSyncStatus('ok');
+    }
+  }
+  isSyncing = false;
+}
+
+async function saveAndSync() {
+  if (!isCloudTrip) return;
+  const trip = getTrips().find(t => t.id === currentTripId);
+  const expData = getExpenseData(currentTripId);
+  await cloudSave(currentTripId, { trip, expData });
+}
+
+function startSync() {
+  stopSync();
+  syncInterval = setInterval(syncFromCloud, 5000);
+}
+
+function stopSync() {
+  if (syncInterval) { clearInterval(syncInterval); syncInterval = null; }
+}
+
+// =================== 分享 ===================
+async function shareTrip() {
+  const trip = getTrips().find(t => t.id === currentTripId);
   if (!trip) return;
-  const data = btoa(encodeURIComponent(JSON.stringify(trip)));
-  const url = location.href.split('?')[0] + '?share=' + data;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => showToast('✅ 分享連結已複製！貼給旅伴吧'));
-  } else {
-    prompt('複製這個連結分享給旅伴：', url);
+  setSyncStatus('syncing');
+  try {
+    await cloudSave(currentTripId, { trip, expData: getExpenseData(currentTripId) });
+    const url = `${location.href.split('?')[0]}?cloud=${currentTripId}`;
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      showToast('✅ 分享連結已複製！旅伴開啟後可共同編輯');
+    } else {
+      prompt('複製這個連結：', url);
+    }
+    setSyncStatus('ok');
+  } catch(e) {
+    showToast('❌ 分享失敗，請檢查網路');
+    setSyncStatus('error');
   }
 }
 
@@ -347,12 +432,20 @@ function showToast(msg) {
   t.className = 'toast';
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2800);
+  setTimeout(() => t.remove(), 3000);
 }
 
 function checkShareParam() {
   const params = new URLSearchParams(location.search);
+  const cloudId = params.get('cloud');
   const share = params.get('share');
+
+  if (cloudId) {
+    // 雲端共享行程
+    loadCloudTrip(cloudId);
+    return;
+  }
+
   if (!share) return;
   try {
     sharedTripData = JSON.parse(decodeURIComponent(atob(share)));
@@ -372,6 +465,22 @@ function importSharedTrip() {
   history.replaceState({}, '', location.pathname);
   showToast('✅ 行程已匯入！');
   renderHome();
+}
+
+async function loadCloudTrip(cloudId) {
+  showToast('🔄 載入共享行程中...');
+  const remote = await cloudGet(cloudId);
+  if (!remote || !remote.trip) { showToast('❌ 找不到行程，連結可能已失效'); return; }
+  const trips = getTrips();
+  const idx = trips.findIndex(t => t.id === cloudId);
+  if (idx >= 0) trips[idx] = remote.trip;
+  else trips.unshift(remote.trip);
+  saveTrips(trips);
+  if (remote.expData) saveExpenseData(cloudId, remote.expData);
+  history.replaceState({}, '', location.pathname);
+  showToast('✅ 共享行程已載入！');
+  renderHome();
+  openTrip(cloudId, true);
 }
 
 // =================== 首頁 ===================
@@ -446,17 +555,22 @@ function deleteTrip(e, id) {
 }
 
 function goHome() {
+  stopSync();
+  isCloudTrip = false;
   document.getElementById('page-trip').classList.add('hidden');
   document.getElementById('page-home').classList.remove('hidden');
   renderHome();
 }
 
 // =================== 行程頁 ===================
-function openTrip(id) {
+function openTrip(id, cloud = false) {
   currentTripId = id;
+  isCloudTrip = cloud;
+  stopSync();
   document.getElementById('page-home').classList.add('hidden');
   document.getElementById('page-trip').classList.remove('hidden');
   switchTab('itinerary');
+  if (cloud) startSync();
 }
 
 function switchTab(tab) {
@@ -486,8 +600,9 @@ function renderItinerary() {
         <span>🌙 ${trip.days.length} 天</span>
       </div>
       ${total > 0 ? `<div class="trip-banner-budget">💰 預估 NT$${total.toLocaleString()}</div>` : ''}
-      <div class="trip-banner-actions">
-        <button class="btn-share" onclick="shareTrip()">🔗 分享行程</button>
+      <div class="trip-banner-actions" style="display:flex;align-items:center;justify-content:space-between">
+        <button class="btn-share" onclick="shareTrip()">🔗 分享共編</button>
+        <span id="sync-status" style="font-size:12px;color:rgba(255,255,255,0.85)">${isCloudTrip ? '✅ 已同步' : ''}</span>
       </div>
     </div>
   `;
@@ -552,6 +667,7 @@ function confirmAddActivity() {
   saveTrips(trips);
   closeActivityModal();
   renderItinerary();
+  saveAndSync();
 }
 
 function deleteActivity(actId, dayIdx) {
@@ -561,6 +677,7 @@ function deleteActivity(actId, dayIdx) {
   trip.days[dayIdx].activities = trip.days[dayIdx].activities.filter(a => a.id !== actId);
   saveTrips(trips);
   renderItinerary();
+  saveAndSync();
 }
 
 // =================== 分帳 ===================
@@ -642,13 +759,13 @@ function confirmAddExpense() {
   if (!desc||!amount||!expPaidBy||expParticipants.length===0) return alert('請填寫所有欄位並選擇付款人和分攤成員');
   const data = getExpenseData(currentTripId);
   data.expenses.push({ id: Date.now().toString(), description:desc, amount, paidBy:expPaidBy, participants:[...expParticipants], date:document.getElementById('exp-date').value });
-  saveExpenseData(currentTripId, data); closeExpenseModal(); renderExpenses();
+  saveExpenseData(currentTripId, data); closeExpenseModal(); renderExpenses(); saveAndSync();
 }
 function deleteExpense(id) {
   if (!confirm('確定刪除這筆費用？')) return;
   const data = getExpenseData(currentTripId);
   data.expenses = data.expenses.filter(e => e.id !== id);
-  saveExpenseData(currentTripId, data); renderExpenses();
+  saveExpenseData(currentTripId, data); renderExpenses(); saveAndSync();
 }
 function calcSettlement(expenses, members) {
   const balances = {}; members.forEach(m => balances[m.name]=0);
