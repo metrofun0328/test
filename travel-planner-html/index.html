@@ -183,6 +183,24 @@
     .dashed-btn:hover { border-color: #2d5080; color: #2d5080; }
     .section-title { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
 
+    /* Members tab */
+    .members-content { flex: 1; overflow-y: auto; padding: 20px 20px 80px; }
+    .member-card { display: flex; align-items: center; gap: 14px; background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .member-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #2d5080, #6080b0); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+    .member-name { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+    .member-you-badge { font-size: 10px; background: #e8946a; color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+    .member-del-btn { margin-left: auto; background: none; border: none; color: #ddd; cursor: pointer; font-size: 18px; }
+    .member-del-btn:hover { color: #e8946a; }
+    .add-member-row { display: flex; gap: 8px; margin-top: 6px; }
+
+    /* Join modal */
+    .join-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(4px); }
+    .join-modal { background: #faf8f5; border-radius: 24px; width: 100%; max-width: 360px; padding: 28px 24px; text-align: center; animation: slideUp 0.3s ease; }
+    .join-modal h2 { font-size: 22px; font-weight: 800; color: #2d5080; margin-bottom: 6px; }
+    .join-modal p { font-size: 14px; color: #888; margin-bottom: 20px; }
+    .join-modal input { width: 100%; padding: 13px 16px; border: 1.5px solid #e0d8d0; border-radius: 12px; font-size: 16px; text-align: center; background: white; box-sizing: border-box; margin-bottom: 14px; }
+    .join-modal button { width: 100%; padding: 13px; background: #2d5080; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
+
     /* Toast */
     .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 999; animation: fadeInUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); white-space: nowrap; }
     @keyframes fadeInUp { from { opacity:0; transform: translate(-50%,10px); } to { opacity:1; transform: translate(-50%,0); } }
@@ -268,6 +286,10 @@
 
   <div id="tab-expenses" class="hidden" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
     <div class="expense-content" id="expense-content"></div>
+  </div>
+
+  <div id="tab-members" class="hidden" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+    <div class="members-content" id="members-content"></div>
   </div>
 
   <!-- 底部導航 -->
@@ -372,6 +394,8 @@ const getTrips = () => JSON.parse(localStorage.getItem('trips') || '[]');
 const saveTrips = t => localStorage.setItem('trips', JSON.stringify(t));
 const getExpData = id => JSON.parse(localStorage.getItem('exp_' + id) || '{"expenses":[],"members":[]}');
 const saveExpData = (id, d) => localStorage.setItem('exp_' + id, JSON.stringify(d));
+const getMyName = () => localStorage.getItem('my_name') || '';
+const setMyName = n => localStorage.setItem('my_name', n);
 
 let currentTripId = null;
 let currentDayIdx = 0;
@@ -471,12 +495,26 @@ async function loadCloudTrip(cloudId) {
   if (!remote?.trip) { showToast('❌ 找不到行程'); return; }
   const trips = getTrips();
   const idx = trips.findIndex(t => t.id === cloudId);
+  const isFirstTime = idx < 0;
   if (idx >= 0) trips[idx] = remote.trip; else trips.unshift(remote.trip);
   saveTrips(trips);
   if (remote.expData) saveExpData(cloudId, remote.expData);
   history.replaceState({}, '', location.pathname);
   showToast('✅ 共享行程已載入！');
   renderHome(); openTrip(cloudId, true);
+
+  if (isFirstTime && !getMyName()) {
+    showJoinModal(remote.trip.title, async (name) => {
+      const d = getExpData(cloudId);
+      if (!d.members.find(m => m.name === name)) {
+        d.members.push({ id: Date.now().toString(), name });
+        saveExpData(cloudId, d);
+        await cloudSave(cloudId, { trip: getTrips().find(t => t.id === cloudId), expData: d });
+        showToast(`✅ 已以「${name}」加入成員！`);
+        if (document.getElementById('tab-members') && !document.getElementById('tab-members').classList.contains('hidden')) renderMembers();
+      }
+    });
+  }
 }
 
 function importSharedTrip() {
@@ -576,24 +614,74 @@ function goHome() {
 }
 
 function switchTab(tab) {
-  ['itinerary','expenses'].forEach(t => {
+  ['itinerary','expenses','members'].forEach(t => {
     document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
     document.getElementById('nav-' + t)?.classList.toggle('active', t === tab);
   });
   document.getElementById('nav-share').classList.remove('active');
-  document.getElementById('nav-members').classList.remove('active');
   if (tab === 'itinerary') renderDayContent();
-  else renderExpenses();
+  else if (tab === 'expenses') renderExpenses();
+  else if (tab === 'members') renderMembers();
 }
-function switchToMembers() {
-  switchTab('expenses');
-  document.getElementById('nav-expenses').classList.remove('active');
-  document.getElementById('nav-members').classList.add('active');
-  setTimeout(() => {
-    const el = document.querySelector('.member-chips')?.closest('.section-title')?.parentElement
-      || document.querySelector('[id*="member"], .member-chips');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+function switchToMembers() { switchTab('members'); }
+
+function renderMembers() {
+  const data = getExpData(currentTripId);
+  const myName = getMyName();
+  const avatarChar = n => n.trim().charAt(0).toUpperCase();
+  let html = `<div class="section-title">旅伴成員（${data.members.length} 人）</div>`;
+  if (data.members.length === 0) {
+    html += `<p style="color:#bbb;text-align:center;padding:32px 0;font-size:14px">還沒有成員，快邀請旅伴加入！</p>`;
+  } else {
+    html += data.members.map(m => `
+      <div class="member-card">
+        <div class="member-avatar">${avatarChar(m.name)}</div>
+        <span class="member-name">${m.name}${m.name === myName ? '<span class="member-you-badge">我</span>' : ''}</span>
+        <button class="member-del-btn" onclick="delMember('${m.id}')">×</button>
+      </div>`).join('');
+  }
+  html += `
+    <div class="section-title" style="margin-top:20px">新增成員</div>
+    <div class="add-member-row">
+      <input class="form-input" id="new-member-tab" placeholder="輸入成員姓名" style="flex:1" onkeydown="if(event.key==='Enter')addMemberFromTab()" />
+      <button class="btn-submit" style="width:auto;padding:10px 16px" onclick="addMemberFromTab()">＋</button>
+    </div>`;
+  document.getElementById('members-content').innerHTML = html;
+}
+
+function addMemberFromTab() {
+  const el = document.getElementById('new-member-tab');
+  const name = el.value.trim(); if (!name) return;
+  const d = getExpData(currentTripId);
+  if (d.members.find(m => m.name === name)) { el.value = ''; return; }
+  d.members.push({ id: Date.now().toString(), name });
+  saveExpData(currentTripId, d); el.value = ''; renderMembers(); saveAndSync();
+}
+
+// ===== 加入行程彈窗 =====
+function showJoinModal(tripName, onJoin) {
+  const overlay = document.createElement('div');
+  overlay.className = 'join-modal-overlay';
+  overlay.innerHTML = `
+    <div class="join-modal">
+      <div style="font-size:48px;margin-bottom:8px">✈️</div>
+      <h2>歡迎加入旅程！</h2>
+      <p>你受邀加入「${tripName}」<br>請輸入你的名字讓旅伴認識你</p>
+      <input id="join-name-input" placeholder="你的名字" maxlength="20" />
+      <button onclick="confirmJoin()">加入旅程 →</button>
+      <p style="margin-top:12px;font-size:12px;color:#ccc;cursor:pointer" onclick="this.closest('.join-modal-overlay').remove();onJoinSkip()">先跳過</p>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('join-name-input').focus();
+  window._onJoinConfirm = onJoin;
+  window._onJoinSkip = () => {};
+}
+function confirmJoin() {
+  const name = document.getElementById('join-name-input')?.value.trim();
+  if (!name) { document.getElementById('join-name-input').style.borderColor='#e8946a'; return; }
+  setMyName(name);
+  document.querySelector('.join-modal-overlay')?.remove();
+  if (window._onJoinConfirm) window._onJoinConfirm(name);
 }
 
 // ===== 日期分頁 =====
@@ -732,7 +820,10 @@ function addMember() {
 function delMember(id) {
   const d = getExpData(currentTripId);
   d.members = d.members.filter(m => m.id !== id);
-  saveExpData(currentTripId, d); renderExpenses(); saveAndSync();
+  saveExpData(currentTripId, d);
+  if (!document.getElementById('tab-members').classList.contains('hidden')) renderMembers();
+  else renderExpenses();
+  saveAndSync();
 }
 function openExpenseModal() {
   const d = getExpData(currentTripId);
