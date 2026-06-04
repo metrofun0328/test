@@ -281,7 +281,7 @@
     <button class="nav-item" id="nav-share" onclick="shareTrip()">
       <span class="nav-item-icon">🔗</span>分享
     </button>
-    <button class="nav-item" id="nav-members" onclick="switchTab('expenses')">
+    <button class="nav-item" id="nav-members" onclick="switchToMembers()">
       <span class="nav-item-icon">👥</span>成員
     </button>
   </div>
@@ -584,6 +584,16 @@ function switchTab(tab) {
   document.getElementById('nav-members').classList.remove('active');
   if (tab === 'itinerary') renderDayContent();
   else renderExpenses();
+}
+function switchToMembers() {
+  switchTab('expenses');
+  document.getElementById('nav-expenses').classList.remove('active');
+  document.getElementById('nav-members').classList.add('active');
+  setTimeout(() => {
+    const el = document.querySelector('.member-chips')?.closest('.section-title')?.parentElement
+      || document.querySelector('[id*="member"], .member-chips');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 // ===== 日期分頁 =====
