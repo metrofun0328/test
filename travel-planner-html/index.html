@@ -7,7 +7,6 @@
   <meta name="theme-color" content="#2563eb" />
   <title>旅遊規劃</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
@@ -118,8 +117,17 @@
     .modal-header h3 { font-size: 18px; font-weight: 700; }
     .hidden { display: none; }
 
-    /* Map */
-    #map { height: 280px; border-radius: 14px; margin-bottom: 14px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    /* Bottom nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 390px; background: white; border-top: 1px solid #e5e7eb; display: flex; z-index: 50; box-shadow: 0 -4px 16px rgba(0,0,0,0.08); }
+    @media (max-width: 420px) { .bottom-nav { width: 100%; left: 0; transform: none; } }
+    .nav-btn { flex: 1; padding: 10px 4px 12px; border: none; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; color: #9ca3af; font-size: 10px; font-weight: 600; transition: color 0.2s; }
+    .nav-btn.active { color: #2563eb; }
+    .nav-btn-icon { font-size: 22px; line-height: 1; }
+    .page-content { padding-bottom: 72px; }
+
+    /* Google Maps link */
+    .location-link { font-size: 11px; color: #2563eb; margin-top: 3px; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; }
+    .location-link:hover { text-decoration: underline; }
 
     /* Expense */
     .stat-banner { background: linear-gradient(135deg,#059669,#10b981); border-radius: 14px; padding: 18px; color: white; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(5,150,105,0.25); }
@@ -214,17 +222,21 @@
 
 <!-- ===== 行程頁 ===== -->
 <div id="page-trip" class="container hidden">
-  <button class="back-btn" onclick="goHome()">← 返回首頁</button>
-
-  <div class="tabs">
-    <button class="tab active" id="tab-itinerary" onclick="switchTab('itinerary')">🗺 行程</button>
-    <button class="tab" id="tab-map" onclick="switchTab('map')">📍 地圖</button>
-    <button class="tab" id="tab-expenses" onclick="switchTab('expenses')">💰 分帳</button>
+  <div class="page-content">
+    <button class="back-btn" onclick="goHome()">← 返回首頁</button>
+    <div id="tab-content-itinerary"></div>
+    <div id="tab-content-expenses" class="hidden"></div>
   </div>
 
-  <div id="tab-content-itinerary"></div>
-  <div id="tab-content-map" class="hidden"></div>
-  <div id="tab-content-expenses" class="hidden"></div>
+  <!-- 底部導航 -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="tab-itinerary" onclick="switchTab('itinerary')">
+      <span class="nav-btn-icon">🗺</span>行程
+    </button>
+    <button class="nav-btn" id="tab-expenses" onclick="switchTab('expenses')">
+      <span class="nav-btn-icon">💰</span>分帳
+    </button>
+  </div>
 </div>
 
 <!-- ===== 新增活動 Modal ===== -->
@@ -303,7 +315,6 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // =================== 資料 ===================
 function getTrips() { return JSON.parse(localStorage.getItem('trips') || '[]'); }
@@ -315,7 +326,6 @@ let currentTripId = null;
 let addingDayIndex = null;
 let expPaidBy = '';
 let expParticipants = [];
-let mapInstance = null;
 let sharedTripData = null;
 
 // =================== 分享 / 匯入 ===================
@@ -436,7 +446,6 @@ function deleteTrip(e, id) {
 }
 
 function goHome() {
-  if (mapInstance) { mapInstance.remove(); mapInstance = null; }
   document.getElementById('page-trip').classList.add('hidden');
   document.getElementById('page-home').classList.remove('hidden');
   renderHome();
@@ -451,12 +460,11 @@ function openTrip(id) {
 }
 
 function switchTab(tab) {
-  ['itinerary','map','expenses'].forEach(t => {
+  ['itinerary','expenses'].forEach(t => {
     document.getElementById('tab-' + t).classList.toggle('active', t === tab);
     document.getElementById('tab-content-' + t).classList.toggle('hidden', t !== tab);
   });
   if (tab === 'itinerary') renderItinerary();
-  else if (tab === 'map') renderMap();
   else renderExpenses();
 }
 
@@ -503,7 +511,7 @@ function renderItinerary() {
                   <span class="activity-title">${a.title}</span>
                   <span class="activity-tag ${catClass[a.category]}">${catEmoji[a.category]} ${catLabel[a.category]}</span>
                 </div>
-                ${a.location ? `<div class="activity-location">📍 ${a.location}</div>` : ''}
+                ${a.location ? `<a class="location-link" href="https://www.google.com/maps/search/${encodeURIComponent(a.location)}" target="_blank">📍 ${a.location} ↗</a>` : ''}
                 ${a.description ? `<div class="activity-desc">${a.description}</div>` : ''}
                 ${a.estimatedCost > 0 ? `<div class="activity-cost">約 NT$${a.estimatedCost.toLocaleString()}</div>` : ''}
               </div>
@@ -553,49 +561,6 @@ function deleteActivity(actId, dayIdx) {
   trip.days[dayIdx].activities = trip.days[dayIdx].activities.filter(a => a.id !== actId);
   saveTrips(trips);
   renderItinerary();
-}
-
-// =================== 地圖 ===================
-const catColors = { attraction:'#2563eb', food:'#ea580c', transport:'#6b7280', accommodation:'#7c3aed', other:'#16a34a' };
-
-async function geocode(locationName) {
-  try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}&limit=1`);
-    const data = await res.json();
-    if (data.length > 0) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-  } catch(e) {}
-  return null;
-}
-
-async function renderMap() {
-  const trip = getTrips().find(t => t.id === currentTripId);
-  if (!trip) return;
-
-  document.getElementById('tab-content-map').innerHTML = '<div id="map"></div><p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:8px">📍 顯示有填寫地點的活動</p>';
-
-  if (mapInstance) { mapInstance.remove(); mapInstance = null; }
-  mapInstance = L.map('map').setView([25.033, 121.565], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(mapInstance);
-
-  const allActivities = trip.days.flatMap(d => d.activities).filter(a => a.location);
-  const markers = [];
-
-  for (const a of allActivities) {
-    const pos = await geocode(a.location);
-    if (!pos) continue;
-    const color = catColors[a.category] || '#2563eb';
-    const icon = L.divIcon({
-      className: '',
-      html: `<div style="width:32px;height:32px;background:${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3)"><span style="display:block;transform:rotate(45deg);text-align:center;line-height:28px;font-size:14px">${catEmoji[a.category]}</span></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-    });
-    const marker = L.marker([pos.lat, pos.lng], { icon }).addTo(mapInstance);
-    marker.bindPopup(`<b>${a.title}</b><br><small>${a.time} · ${catLabel[a.category]}</small>${a.estimatedCost>0?`<br><small style="color:#16a34a">NT$${a.estimatedCost.toLocaleString()}</small>`:''}`);
-    markers.push([pos.lat, pos.lng]);
-  }
-
-  if (markers.length > 0) mapInstance.fitBounds(markers, { padding: [40, 40] });
 }
 
 // =================== 分帳 ===================
