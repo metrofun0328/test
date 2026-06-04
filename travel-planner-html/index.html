@@ -7,86 +7,90 @@
   <meta name="theme-color" content="#2563eb" />
   <title>旅遊規劃</title>
   <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(135deg, #eff6ff, #ffffff, #eef2ff); min-height: 100vh; color: #1f2937; }
-    .container { max-width: 600px; margin: 0 auto; padding: 24px 16px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f0f4ff; min-height: 100vh; color: #1f2937; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
 
     /* Header */
-    .header { text-align: center; margin-bottom: 32px; }
-    .header-icon { width: 64px; height: 64px; background: #2563eb; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 12px; }
-    .header h1 { font-size: 28px; font-weight: 700; color: #111827; }
-    .header p { color: #6b7280; margin-top: 6px; }
+    .header { text-align: center; margin-bottom: 28px; padding-top: 8px; }
+    .header-icon { width: 68px; height: 68px; background: linear-gradient(135deg,#2563eb,#4f46e5); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 34px; margin-bottom: 12px; box-shadow: 0 8px 24px rgba(37,99,235,0.25); }
+    .header h1 { font-size: 26px; font-weight: 800; color: #111827; letter-spacing: -0.5px; }
+    .header p { color: #6b7280; margin-top: 4px; font-size: 14px; }
 
     /* Buttons */
     .btn { border: none; cursor: pointer; border-radius: 12px; font-size: 15px; font-weight: 600; transition: all 0.2s; }
-    .btn-primary { background: #2563eb; color: white; padding: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-secondary { background: white; color: #374151; border: 1px solid #d1d5db; padding: 10px 16px; }
+    .btn-primary { background: linear-gradient(135deg,#2563eb,#4f46e5); color: white; padding: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary { background: white; color: #374151; border: 1px solid #e5e7eb; padding: 10px 16px; }
     .btn-secondary:hover { background: #f9fafb; }
     .btn-danger { background: none; border: none; color: #d1d5db; cursor: pointer; padding: 4px; border-radius: 6px; transition: color 0.2s; }
     .btn-danger:hover { color: #ef4444; }
     .btn-sm { padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+    .btn-share { background: white; border: 1px solid #e5e7eb; color: #374151; padding: 8px 14px; font-size: 13px; font-weight: 600; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+    .btn-share:hover { background: #f0f4ff; border-color: #93c5fd; color: #2563eb; }
 
     /* Card */
-    .card { background: white; border-radius: 16px; border: 1px solid #e5e7eb; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .card-header { display: flex; align-items: center; justify-content: between; margin-bottom: 16px; }
-    .card-header h2 { font-size: 17px; font-weight: 600; flex: 1; }
+    .card { background: white; border-radius: 16px; border: 1px solid #e5e7eb; padding: 20px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
     .card-close { background: none; border: none; font-size: 22px; color: #9ca3af; cursor: pointer; padding: 0 4px; }
     .card-close:hover { color: #374151; }
 
     /* Form */
     .form-group { margin-bottom: 14px; }
     .form-label { display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 5px; }
-    .form-input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; background: white; }
-    .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+    .form-input { width: 100%; padding: 10px 12px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: white; color: #111827; }
+    .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
     /* Trip list */
-    .trip-card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .trip-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: #93c5fd; }
-    .trip-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .trip-meta { display: flex; gap: 12px; color: #6b7280; font-size: 13px; }
-    .trip-meta span { display: flex; align-items: center; gap: 3px; }
-    .trip-budget { font-size: 12px; color: #16a34a; font-weight: 500; margin-top: 4px; }
-    .trip-actions { display: flex; align-items: center; gap: 4px; color: #9ca3af; }
+    .trip-card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .trip-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); border-color: #93c5fd; transform: translateY(-1px); }
+    .trip-card-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .trip-emoji { width: 44px; height: 44px; background: linear-gradient(135deg,#eff6ff,#eef2ff); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .trip-info h3 { font-size: 15px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .trip-meta { display: flex; gap: 10px; color: #6b7280; font-size: 12px; }
+    .trip-budget { font-size: 12px; color: #16a34a; font-weight: 600; margin-top: 3px; }
+    .trip-actions { display: flex; align-items: center; gap: 4px; color: #9ca3af; flex-shrink: 0; margin-left: 8px; }
 
     /* Empty state */
-    .empty { text-align: center; padding: 64px 0; color: #9ca3af; }
-    .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+    .empty { text-align: center; padding: 60px 0; color: #9ca3af; }
+    .empty-icon { font-size: 52px; margin-bottom: 14px; opacity: 0.35; }
+    .empty p { font-size: 15px; }
 
     /* Tabs */
-    .tabs { display: flex; gap: 4px; background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 4px; margin-bottom: 20px; }
-    .tab { flex: 1; padding: 8px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; color: #6b7280; background: none; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
-    .tab.active { background: #2563eb; color: white; }
+    .tabs { display: flex; gap: 4px; background: white; border: 1px solid #e5e7eb; border-radius: 14px; padding: 4px; margin-bottom: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .tab { flex: 1; padding: 9px; border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; color: #6b7280; background: none; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s; }
+    .tab.active { background: linear-gradient(135deg,#2563eb,#4f46e5); color: white; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
 
-    /* Trip header banner */
-    .trip-banner { background: linear-gradient(135deg, #2563eb, #4f46e5); border-radius: 14px; padding: 20px; color: white; margin-bottom: 16px; }
-    .trip-banner h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-    .trip-banner-meta { display: flex; gap: 16px; color: rgba(255,255,255,0.8); font-size: 13px; flex-wrap: wrap; }
-    .trip-banner-meta span { display: flex; align-items: center; gap: 4px; }
-    .trip-banner-budget { font-size: 17px; font-weight: 600; margin-top: 10px; }
+    /* Trip banner */
+    .trip-banner { background: linear-gradient(135deg,#1d4ed8,#4f46e5,#7c3aed); border-radius: 18px; padding: 22px; color: white; margin-bottom: 16px; position: relative; overflow: hidden; }
+    .trip-banner::before { content:'✈️'; position: absolute; right: 16px; top: 16px; font-size: 48px; opacity: 0.15; }
+    .trip-banner h2 { font-size: 21px; font-weight: 800; margin-bottom: 6px; }
+    .trip-banner-meta { display: flex; gap: 14px; color: rgba(255,255,255,0.8); font-size: 13px; flex-wrap: wrap; margin-bottom: 10px; }
+    .trip-banner-budget { font-size: 17px; font-weight: 700; }
+    .trip-banner-actions { display: flex; gap: 8px; margin-top: 14px; }
 
     /* Day card */
-    .day-card { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
-    .day-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: linear-gradient(135deg, #eff6ff, #eef2ff); cursor: pointer; }
-    .day-header:hover { background: linear-gradient(135deg, #dbeafe, #e0e7ff); }
-    .day-num { width: 32px; height: 32px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .day-card { border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; margin-bottom: 12px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .day-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; background: linear-gradient(135deg,#f8faff,#f0f4ff); cursor: pointer; }
+    .day-header:hover { background: linear-gradient(135deg,#eff6ff,#e0e7ff); }
+    .day-num { width: 34px; height: 34px; background: linear-gradient(135deg,#2563eb,#4f46e5); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
     .day-info { margin-left: 12px; flex: 1; }
-    .day-info p { font-weight: 600; font-size: 15px; }
+    .day-info p { font-weight: 700; font-size: 15px; color: #111827; }
     .day-info span { font-size: 12px; color: #6b7280; }
-    .day-cost { font-size: 12px; color: #16a34a; font-weight: 500; margin-right: 8px; }
-    .day-body { padding: 12px; background: #f9fafb; }
+    .day-cost { font-size: 12px; color: #16a34a; font-weight: 600; margin-right: 6px; }
+    .day-body { padding: 12px; background: #fafbff; }
 
     /* Activity */
-    .activity { display: flex; gap: 10px; padding: 10px 12px; background: white; border-radius: 8px; border: 1px solid #f3f4f6; margin-bottom: 8px; transition: box-shadow 0.2s; position: relative; }
-    .activity:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .activity-time { font-size: 11px; color: #9ca3af; width: 40px; flex-shrink: 0; padding-top: 2px; }
+    .activity { display: flex; gap: 10px; padding: 11px 12px; background: white; border-radius: 10px; border: 1px solid #f0f0f0; margin-bottom: 8px; transition: all 0.2s; position: relative; }
+    .activity:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.07); border-color: #dbeafe; }
+    .activity-time { font-size: 11px; color: #9ca3af; width: 38px; flex-shrink: 0; padding-top: 2px; font-weight: 500; }
     .activity-body { flex: 1; min-width: 0; }
     .activity-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-    .activity-title { font-size: 14px; font-weight: 500; }
-    .activity-tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid; flex-shrink: 0; display: flex; align-items: center; gap: 3px; }
+    .activity-title { font-size: 14px; font-weight: 600; color: #111827; }
+    .activity-tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid; flex-shrink: 0; display: flex; align-items: center; gap: 3px; font-weight: 500; }
     .tag-attraction { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
     .tag-food { background: #ffedd5; color: #c2410c; border-color: #fed7aa; }
     .tag-transport { background: #f3f4f6; color: #374151; border-color: #e5e7eb; }
@@ -94,50 +98,61 @@
     .tag-other { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
     .activity-location { font-size: 11px; color: #9ca3af; margin-top: 3px; }
     .activity-desc { font-size: 12px; color: #6b7280; margin-top: 3px; }
-    .activity-cost { font-size: 11px; color: #16a34a; font-weight: 500; margin-top: 3px; }
+    .activity-cost { font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 3px; }
     .activity-delete { position: absolute; right: 8px; top: 8px; opacity: 0; transition: opacity 0.2s; }
     .activity:hover .activity-delete { opacity: 1; }
 
-    /* Add activity btn */
-    .add-activity-btn { width: 100%; padding: 8px; border: 1.5px dashed #d1d5db; border-radius: 8px; background: none; color: #9ca3af; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; margin-top: 4px; }
-    .add-activity-btn:hover { border-color: #3b82f6; color: #2563eb; }
-    .empty-day { text-align: center; color: #9ca3af; font-size: 12px; padding: 8px 0; margin-bottom: 8px; }
+    /* Add activity */
+    .add-activity-btn { width: 100%; padding: 9px; border: 1.5px dashed #d1d5db; border-radius: 10px; background: none; color: #9ca3af; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; margin-top: 4px; }
+    .add-activity-btn:hover { border-color: #2563eb; color: #2563eb; background: #f0f4ff; }
+    .empty-day { text-align: center; color: #9ca3af; font-size: 12px; padding: 10px 0; margin-bottom: 4px; }
 
     /* Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: flex-end; justify-content: center; padding: 16px; backdrop-filter: blur(2px); }
     @media (min-width: 640px) { .modal-overlay { align-items: center; } }
-    .modal { background: white; border-radius: 20px; width: 100%; max-width: 440px; padding: 20px; max-height: 90vh; overflow-y: auto; }
-    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .modal-header h3 { font-size: 17px; font-weight: 600; }
+    .modal { background: white; border-radius: 22px; width: 100%; max-width: 440px; padding: 22px; max-height: 92vh; overflow-y: auto; animation: slideUp 0.25s ease; }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .modal-header h3 { font-size: 18px; font-weight: 700; }
     .hidden { display: none; }
 
+    /* Map */
+    #map { height: 280px; border-radius: 14px; margin-bottom: 14px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
     /* Expense */
-    .stat-banner { background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; padding: 16px; color: white; margin-bottom: 16px; }
+    .stat-banner { background: linear-gradient(135deg,#059669,#10b981); border-radius: 14px; padding: 18px; color: white; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(5,150,105,0.25); }
     .stat-banner p { font-size: 13px; opacity: 0.9; }
-    .stat-banner .amount { font-size: 26px; font-weight: 700; margin: 4px 0; }
+    .stat-banner .amount { font-size: 28px; font-weight: 800; margin: 4px 0; }
     .stat-banner .avg { font-size: 13px; opacity: 0.85; }
     .member-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .member-chip { display: flex; align-items: center; gap: 4px; padding: 4px 12px; background: #eff6ff; color: #1d4ed8; border-radius: 20px; font-size: 13px; }
+    .member-chip { display: flex; align-items: center; gap: 4px; padding: 5px 12px; background: #eff6ff; color: #1d4ed8; border-radius: 20px; font-size: 13px; font-weight: 500; }
     .member-chip button { background: none; border: none; color: #93c5fd; cursor: pointer; font-size: 14px; line-height: 1; }
     .member-chip button:hover { color: #ef4444; }
-    .expense-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: white; border-radius: 8px; border: 1px solid #f3f4f6; margin-bottom: 8px; }
-    .expense-desc { font-size: 14px; font-weight: 500; }
+    .expense-item { display: flex; align-items: center; justify-content: space-between; padding: 13px; background: white; border-radius: 10px; border: 1px solid #f0f0f0; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .expense-desc { font-size: 14px; font-weight: 600; }
     .expense-meta { font-size: 11px; color: #9ca3af; margin-top: 2px; }
-    .expense-amount { font-size: 14px; font-weight: 600; color: #16a34a; }
-    .settlement-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px; }
-    .settlement-box h3 { font-size: 14px; font-weight: 600; color: #92400e; margin-bottom: 8px; }
-    .settlement-item { font-size: 13px; color: #b45309; margin-bottom: 4px; }
+    .expense-amount { font-size: 14px; font-weight: 700; color: #16a34a; }
+    .settlement-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 16px; }
+    .settlement-box h3 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 10px; }
+    .settlement-item { font-size: 13px; color: #b45309; margin-bottom: 6px; padding: 8px 10px; background: rgba(255,255,255,0.6); border-radius: 8px; }
     .toggle-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .toggle-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid #d1d5db; background: none; font-size: 13px; color: #374151; cursor: pointer; transition: all 0.2s; }
+    .toggle-chip { padding: 6px 14px; border-radius: 20px; border: 1.5px solid #e5e7eb; background: none; font-size: 13px; color: #374151; cursor: pointer; transition: all 0.2s; font-weight: 500; }
     .toggle-chip.selected-blue { background: #2563eb; color: white; border-color: #2563eb; }
     .toggle-chip.selected-green { background: #16a34a; color: white; border-color: #16a34a; }
-    .section-title { font-size: 15px; font-weight: 600; color: #1f2937; margin-bottom: 10px; display: flex; align-items: center; gap-6px; }
-    .back-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; color: #6b7280; font-size: 14px; cursor: pointer; padding: 0; margin-bottom: 16px; }
-    .back-btn:hover { color: #374151; }
-    .dashed-btn { width: 100%; padding: 10px; border: 1.5px dashed #d1d5db; border-radius: 12px; background: none; color: #6b7280; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; margin-bottom: 12px; }
-    .dashed-btn:hover { border-color: #2563eb; color: #2563eb; }
-    .section-label { font-size: 12px; color: #6b7280; margin-bottom: 6px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #1f2937; margin-bottom: 10px; }
+    .back-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; color: #6b7280; font-size: 14px; cursor: pointer; padding: 0; margin-bottom: 16px; font-weight: 500; }
+    .back-btn:hover { color: #111827; }
+    .dashed-btn { width: 100%; padding: 11px; border: 1.5px dashed #d1d5db; border-radius: 12px; background: none; color: #6b7280; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; margin-bottom: 14px; font-weight: 500; }
+    .dashed-btn:hover { border-color: #2563eb; color: #2563eb; background: #f0f4ff; }
     select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+    /* Share toast */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #111827; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 999; animation: fadeInUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    @keyframes fadeInUp { from { opacity:0; transform: translate(-50%,10px); } to { opacity:1; transform: translate(-50%,0); } }
+
+    /* Import banner */
+    .import-banner { background: linear-gradient(135deg,#f0fdf4,#dcfce7); border: 1px solid #86efac; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .import-banner p { font-size: 14px; color: #166534; font-weight: 600; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -150,14 +165,20 @@
     <p>輕鬆規劃你的旅遊行程</p>
   </div>
 
+  <!-- 匯入行程橫幅（收到分享連結時顯示） -->
+  <div id="import-banner" class="import-banner hidden">
+    <p>📩 收到一份共享行程！</p>
+    <button class="btn btn-primary" style="width:auto;padding:10px 20px" onclick="importSharedTrip()">匯入行程</button>
+  </div>
+
   <button class="btn btn-primary" onclick="showCreateForm()" id="btn-new-trip">
     <span>＋</span> 建立新行程
   </button>
 
   <!-- 建立行程表單 -->
-  <div id="create-form" class="card hidden" style="margin-top:16px">
+  <div id="create-form" class="card hidden" style="margin-top:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <h2 style="font-size:17px;font-weight:600">建立新行程</h2>
+      <h2 style="font-size:17px;font-weight:700">建立新行程</h2>
       <button class="card-close" onclick="hideCreateForm()">×</button>
     </div>
     <div class="form-group">
@@ -170,7 +191,7 @@
         <input class="form-input" id="input-date" type="date" />
       </div>
       <div class="form-group">
-        <label class="form-label">📅 天數 *</label>
+        <label class="form-label">🌙 天數 *</label>
         <input class="form-input" id="input-days" type="number" min="1" max="30" value="5" />
       </div>
     </div>
@@ -182,9 +203,9 @@
   </div>
 
   <!-- 行程列表 -->
-  <div id="trip-list" style="margin-top:16px"></div>
+  <div id="trip-list" style="margin-top:14px"></div>
   <div id="empty-state" class="empty hidden">
-    <div class="empty-icon">✈️</div>
+    <div class="empty-icon">🗺️</div>
     <p>還沒有行程，建立你的第一趟旅行吧！</p>
   </div>
 </div>
@@ -194,11 +215,13 @@
   <button class="back-btn" onclick="goHome()">← 返回首頁</button>
 
   <div class="tabs">
-    <button class="tab active" id="tab-itinerary" onclick="switchTab('itinerary')">🗺 行程規劃</button>
-    <button class="tab" id="tab-expenses" onclick="switchTab('expenses')">💰 分帳記帳</button>
+    <button class="tab active" id="tab-itinerary" onclick="switchTab('itinerary')">🗺 行程</button>
+    <button class="tab" id="tab-map" onclick="switchTab('map')">📍 地圖</button>
+    <button class="tab" id="tab-expenses" onclick="switchTab('expenses')">💰 分帳</button>
   </div>
 
   <div id="tab-content-itinerary"></div>
+  <div id="tab-content-map" class="hidden"></div>
   <div id="tab-content-expenses" class="hidden"></div>
 </div>
 
@@ -217,11 +240,11 @@
       <div class="form-group">
         <label class="form-label">類型</label>
         <select class="form-input" id="act-category">
-          <option value="attraction">景點</option>
-          <option value="food">美食</option>
-          <option value="transport">交通</option>
-          <option value="accommodation">住宿</option>
-          <option value="other">其他</option>
+          <option value="attraction">📷 景點</option>
+          <option value="food">🍴 美食</option>
+          <option value="transport">🚗 交通</option>
+          <option value="accommodation">🏠 住宿</option>
+          <option value="other">📌 其他</option>
         </select>
       </div>
     </div>
@@ -230,8 +253,8 @@
       <input class="form-input" id="act-title" placeholder="例如：參觀淺草寺" />
     </div>
     <div class="form-group">
-      <label class="form-label">地點</label>
-      <input class="form-input" id="act-location" placeholder="例如：東京都台東區" />
+      <label class="form-label">地點（用於地圖）</label>
+      <input class="form-input" id="act-location" placeholder="例如：東京都台東區淺草" />
     </div>
     <div class="form-group">
       <label class="form-label">備註</label>
@@ -278,6 +301,7 @@
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // =================== 資料 ===================
 function getTrips() { return JSON.parse(localStorage.getItem('trips') || '[]'); }
@@ -285,17 +309,64 @@ function saveTrips(t) { localStorage.setItem('trips', JSON.stringify(t)); }
 function getExpenseData(id) { return JSON.parse(localStorage.getItem('exp_' + id) || '{"expenses":[],"members":[]}'); }
 function saveExpenseData(id, d) { localStorage.setItem('exp_' + id, JSON.stringify(d)); }
 
-// =================== 首頁 ===================
 let currentTripId = null;
 let addingDayIndex = null;
 let expPaidBy = '';
 let expParticipants = [];
+let mapInstance = null;
+let sharedTripData = null;
 
+// =================== 分享 / 匯入 ===================
+function shareTrip() {
+  const trips = getTrips();
+  const trip = trips.find(t => t.id === currentTripId);
+  if (!trip) return;
+  const data = btoa(encodeURIComponent(JSON.stringify(trip)));
+  const url = location.href.split('?')[0] + '?share=' + data;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => showToast('✅ 分享連結已複製！貼給旅伴吧'));
+  } else {
+    prompt('複製這個連結分享給旅伴：', url);
+  }
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+function checkShareParam() {
+  const params = new URLSearchParams(location.search);
+  const share = params.get('share');
+  if (!share) return;
+  try {
+    sharedTripData = JSON.parse(decodeURIComponent(atob(share)));
+    document.getElementById('import-banner').classList.remove('hidden');
+  } catch(e) {}
+}
+
+function importSharedTrip() {
+  if (!sharedTripData) return;
+  const trips = getTrips();
+  const exists = trips.find(t => t.id === sharedTripData.id);
+  if (exists) { showToast('這份行程已存在！'); return; }
+  sharedTripData.id = Date.now().toString();
+  trips.unshift(sharedTripData);
+  saveTrips(trips);
+  document.getElementById('import-banner').classList.add('hidden');
+  history.replaceState({}, '', location.pathname);
+  showToast('✅ 行程已匯入！');
+  renderHome();
+}
+
+// =================== 首頁 ===================
 function showCreateForm() {
   document.getElementById('create-form').classList.remove('hidden');
   document.getElementById('btn-new-trip').classList.add('hidden');
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('input-date').value = today;
+  document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
 }
 
 function hideCreateForm() {
@@ -309,29 +380,14 @@ function createTrip() {
   const days = parseInt(document.getElementById('input-days').value);
   const budget = parseInt(document.getElementById('input-budget').value) || 0;
   if (!dest || !date || !days) return alert('請填寫必填欄位');
-
   const dayList = [];
   for (let i = 0; i < days; i++) {
-    const d = new Date(date);
-    d.setDate(d.getDate() + i);
-    dayList.push({ day: i + 1, date: d.toISOString().split('T')[0], activities: [] });
+    const d = new Date(date); d.setDate(d.getDate() + i);
+    dayList.push({ day: i+1, date: d.toISOString().split('T')[0], activities: [] });
   }
-  const endDate = new Date(date);
-  endDate.setDate(endDate.getDate() + days - 1);
-
-  const trip = {
-    id: Date.now().toString(),
-    title: dest + '之旅',
-    destination: dest,
-    startDate: date,
-    endDate: endDate.toISOString().split('T')[0],
-    days: dayList,
-    totalBudget: budget,
-    createdAt: new Date().toISOString()
-  };
-  const trips = getTrips();
-  trips.unshift(trip);
-  saveTrips(trips);
+  const endDate = new Date(date); endDate.setDate(endDate.getDate() + days - 1);
+  const trip = { id: Date.now().toString(), title: dest + '之旅', destination: dest, startDate: date, endDate: endDate.toISOString().split('T')[0], days: dayList, totalBudget: budget, createdAt: new Date().toISOString() };
+  const trips = getTrips(); trips.unshift(trip); saveTrips(trips);
   hideCreateForm();
   document.getElementById('input-dest').value = '';
   document.getElementById('input-budget').value = '';
@@ -342,25 +398,29 @@ function renderHome() {
   const trips = getTrips();
   const list = document.getElementById('trip-list');
   const empty = document.getElementById('empty-state');
-  if (trips.length === 0) {
-    list.innerHTML = '';
-    empty.classList.remove('hidden');
-    return;
-  }
+  const destEmoji = (dest) => {
+    if (/日本|tokyo|japan/i.test(dest)) return '🇯🇵';
+    if (/泰國|thailand|曼谷|清邁/i.test(dest)) return '🇹🇭';
+    if (/韓國|korea|首爾/i.test(dest)) return '🇰🇷';
+    if (/歐洲|法國|paris|italy|spain/i.test(dest)) return '🌍';
+    if (/美國|紐約|洛杉磯|usa/i.test(dest)) return '🇺🇸';
+    return '✈️';
+  };
+  if (trips.length === 0) { list.innerHTML = ''; empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
   list.innerHTML = trips.map(t => `
     <div class="trip-card" onclick="openTrip('${t.id}')">
-      <div class="trip-info">
-        <h3>${t.title}</h3>
-        <div class="trip-meta">
-          <span>📍 ${t.destination}</span>
-          <span>📅 ${t.startDate}</span>
+      <div class="trip-card-left">
+        <div class="trip-emoji">${destEmoji(t.destination)}</div>
+        <div class="trip-info">
+          <h3>${t.title}</h3>
+          <div class="trip-meta"><span>📍 ${t.destination}</span><span>📅 ${t.startDate}</span></div>
+          ${t.totalBudget > 0 ? `<div class="trip-budget">預算 NT$${t.totalBudget.toLocaleString()}</div>` : ''}
         </div>
-        ${t.totalBudget > 0 ? `<div class="trip-budget">預算 NT$${t.totalBudget.toLocaleString()}</div>` : ''}
       </div>
       <div class="trip-actions">
         <button class="btn-danger" onclick="deleteTrip(event,'${t.id}')">🗑</button>
-        <span>›</span>
+        <span style="font-size:18px;color:#d1d5db">›</span>
       </div>
     </div>
   `).join('');
@@ -374,6 +434,7 @@ function deleteTrip(e, id) {
 }
 
 function goHome() {
+  if (mapInstance) { mapInstance.remove(); mapInstance = null; }
   document.getElementById('page-trip').classList.add('hidden');
   document.getElementById('page-home').classList.remove('hidden');
   renderHome();
@@ -388,11 +449,12 @@ function openTrip(id) {
 }
 
 function switchTab(tab) {
-  document.getElementById('tab-itinerary').classList.toggle('active', tab === 'itinerary');
-  document.getElementById('tab-expenses').classList.toggle('active', tab === 'expenses');
-  document.getElementById('tab-content-itinerary').classList.toggle('hidden', tab !== 'itinerary');
-  document.getElementById('tab-content-expenses').classList.toggle('hidden', tab !== 'expenses');
+  ['itinerary','map','expenses'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tab-content-' + t).classList.toggle('hidden', t !== tab);
+  });
   if (tab === 'itinerary') renderItinerary();
+  else if (tab === 'map') renderMap();
   else renderExpenses();
 }
 
@@ -402,35 +464,32 @@ const catEmoji = { attraction:'📷', food:'🍴', transport:'🚗', accommodati
 const catClass = { attraction:'tag-attraction', food:'tag-food', transport:'tag-transport', accommodation:'tag-accommodation', other:'tag-other' };
 
 function renderItinerary() {
-  const trips = getTrips();
-  const trip = trips.find(t => t.id === currentTripId);
+  const trip = getTrips().find(t => t.id === currentTripId);
   if (!trip) return;
-
-  const total = trip.days.flatMap(d => d.activities).reduce((s, a) => s + (a.estimatedCost || 0), 0);
-
+  const total = trip.days.flatMap(d => d.activities).reduce((s,a) => s+(a.estimatedCost||0), 0);
   let html = `
     <div class="trip-banner">
       <h2>${trip.title}</h2>
       <div class="trip-banner-meta">
         <span>📍 ${trip.destination}</span>
         <span>📅 ${trip.startDate} ～ ${trip.endDate}</span>
+        <span>🌙 ${trip.days.length} 天</span>
       </div>
-      ${total > 0 ? `<div class="trip-banner-budget">預估總費用：NT$${total.toLocaleString()}</div>` : ''}
+      ${total > 0 ? `<div class="trip-banner-budget">💰 預估 NT$${total.toLocaleString()}</div>` : ''}
+      <div class="trip-banner-actions">
+        <button class="btn-share" onclick="shareTrip()">🔗 分享行程</button>
+      </div>
     </div>
   `;
-
   trip.days.forEach((day, idx) => {
-    const dayCost = day.activities.reduce((s, a) => s + (a.estimatedCost || 0), 0);
+    const dayCost = day.activities.reduce((s,a) => s+(a.estimatedCost||0), 0);
     html += `
       <div class="day-card">
-        <div class="day-header" onclick="toggleDay('day-body-${idx}')">
+        <div class="day-header" onclick="toggleDay('day-body-${idx}','day-arrow-${idx}')">
           <div class="day-num">${day.day}</div>
-          <div class="day-info">
-            <p>第 ${day.day} 天</p>
-            <span>${day.date}</span>
-          </div>
+          <div class="day-info"><p>第 ${day.day} 天</p><span>${day.date}</span></div>
           ${dayCost > 0 ? `<span class="day-cost">NT$${dayCost.toLocaleString()}</span>` : ''}
-          <span id="day-arrow-${idx}">▼</span>
+          <span id="day-arrow-${idx}" style="color:#9ca3af;font-size:12px">▼</span>
         </div>
         <div class="day-body" id="day-body-${idx}">
           ${day.activities.length === 0 ? '<div class="empty-day">還沒有活動，點下方按鈕新增</div>' : ''}
@@ -454,42 +513,29 @@ function renderItinerary() {
       </div>
     `;
   });
-
   document.getElementById('tab-content-itinerary').innerHTML = html;
 }
 
-function toggleDay(id) {
-  const el = document.getElementById(id);
-  el.classList.toggle('hidden');
+function toggleDay(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  const hidden = body.classList.toggle('hidden');
+  if (arrow) arrow.textContent = hidden ? '›' : '▼';
 }
 
 function openActivityModal(dayIdx) {
   addingDayIndex = dayIdx;
-  document.getElementById('act-title').value = '';
-  document.getElementById('act-location').value = '';
-  document.getElementById('act-desc').value = '';
-  document.getElementById('act-cost').value = '';
+  ['act-title','act-location','act-desc','act-cost'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('act-time').value = '09:00';
   document.getElementById('act-category').value = 'attraction';
   document.getElementById('modal-activity').classList.remove('hidden');
 }
-
-function closeActivityModal() {
-  document.getElementById('modal-activity').classList.add('hidden');
-}
+function closeActivityModal() { document.getElementById('modal-activity').classList.add('hidden'); }
 
 function confirmAddActivity() {
   const title = document.getElementById('act-title').value.trim();
   if (!title) return alert('請填寫活動名稱');
-  const activity = {
-    id: Date.now().toString(),
-    time: document.getElementById('act-time').value,
-    title,
-    location: document.getElementById('act-location').value.trim(),
-    description: document.getElementById('act-desc').value.trim(),
-    category: document.getElementById('act-category').value,
-    estimatedCost: parseInt(document.getElementById('act-cost').value) || 0,
-  };
+  const activity = { id: Date.now().toString(), time: document.getElementById('act-time').value, title, location: document.getElementById('act-location').value.trim(), description: document.getElementById('act-desc').value.trim(), category: document.getElementById('act-category').value, estimatedCost: parseInt(document.getElementById('act-cost').value)||0 };
   const trips = getTrips();
   const trip = trips.find(t => t.id === currentTripId);
   trip.days[addingDayIndex].activities.push(activity);
@@ -507,12 +553,54 @@ function deleteActivity(actId, dayIdx) {
   renderItinerary();
 }
 
+// =================== 地圖 ===================
+const catColors = { attraction:'#2563eb', food:'#ea580c', transport:'#6b7280', accommodation:'#7c3aed', other:'#16a34a' };
+
+async function geocode(locationName) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}&limit=1`);
+    const data = await res.json();
+    if (data.length > 0) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  } catch(e) {}
+  return null;
+}
+
+async function renderMap() {
+  const trip = getTrips().find(t => t.id === currentTripId);
+  if (!trip) return;
+
+  document.getElementById('tab-content-map').innerHTML = '<div id="map"></div><p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:8px">📍 顯示有填寫地點的活動</p>';
+
+  if (mapInstance) { mapInstance.remove(); mapInstance = null; }
+  mapInstance = L.map('map').setView([25.033, 121.565], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(mapInstance);
+
+  const allActivities = trip.days.flatMap(d => d.activities).filter(a => a.location);
+  const markers = [];
+
+  for (const a of allActivities) {
+    const pos = await geocode(a.location);
+    if (!pos) continue;
+    const color = catColors[a.category] || '#2563eb';
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:32px;height:32px;background:${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3)"><span style="display:block;transform:rotate(45deg);text-align:center;line-height:28px;font-size:14px">${catEmoji[a.category]}</span></div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+    });
+    const marker = L.marker([pos.lat, pos.lng], { icon }).addTo(mapInstance);
+    marker.bindPopup(`<b>${a.title}</b><br><small>${a.time} · ${catLabel[a.category]}</small>${a.estimatedCost>0?`<br><small style="color:#16a34a">NT$${a.estimatedCost.toLocaleString()}</small>`:''}`);
+    markers.push([pos.lat, pos.lng]);
+  }
+
+  if (markers.length > 0) mapInstance.fitBounds(markers, { padding: [40, 40] });
+}
+
 // =================== 分帳 ===================
 function renderExpenses() {
   const data = getExpenseData(currentTripId);
-  const total = data.expenses.reduce((s, e) => s + e.amount, 0);
-  const avg = data.members.length > 0 ? Math.round(total / data.members.length) : 0;
-
+  const total = data.expenses.reduce((s,e) => s+e.amount, 0);
+  const avg = data.members.length > 0 ? Math.round(total/data.members.length) : 0;
   let html = `
     <div class="card">
       <p class="section-title">👥 旅伴成員</p>
@@ -520,160 +608,96 @@ function renderExpenses() {
         <input class="form-input" id="new-member" placeholder="輸入成員姓名" style="flex:1" onkeydown="if(event.key==='Enter')addMember()" />
         <button class="btn btn-secondary btn-sm" onclick="addMember()">＋</button>
       </div>
-      <div class="member-chips">
-        ${data.members.map(m => `
-          <div class="member-chip">${m.name}
-            <button onclick="deleteMember('${m.id}')">×</button>
-          </div>
-        `).join('')}
-      </div>
+      <div class="member-chips">${data.members.map(m=>`<div class="member-chip">${m.name}<button onclick="deleteMember('${m.id}')">×</button></div>`).join('')}</div>
     </div>
-
     <div class="stat-banner">
       <p>總花費</p>
       <div class="amount">NT$${total.toLocaleString()}</div>
-      ${data.members.length > 0 ? `<div class="avg">每人平均 NT$${avg.toLocaleString()}</div>` : ''}
+      ${data.members.length>0?`<div class="avg">每人平均 NT$${avg.toLocaleString()}</div>`:''}
     </div>
-
     <button class="dashed-btn" onclick="openExpenseModal()">＋ 新增費用</button>
   `;
-
   if (data.expenses.length > 0) {
-    html += `<p class="section-title" style="margin-bottom:10px">🧾 費用明細</p>`;
-    html += data.expenses.map(e => `
+    html += `<p class="section-title">🧾 費用明細</p>`;
+    html += data.expenses.map(e=>`
       <div class="expense-item">
-        <div>
-          <div class="expense-desc">${e.description}</div>
-          <div class="expense-meta">${e.paidBy} 付款 · 分攤：${e.participants.join('、')}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="expense-amount">NT$${e.amount.toLocaleString()}</span>
-          <button class="btn-danger" onclick="deleteExpense('${e.id}')">🗑</button>
-        </div>
+        <div><div class="expense-desc">${e.description}</div><div class="expense-meta">${e.paidBy} 付款 · 分攤：${e.participants.join('、')}</div></div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="expense-amount">NT$${e.amount.toLocaleString()}</span><button class="btn-danger" onclick="deleteExpense('${e.id}')">🗑</button></div>
       </div>
     `).join('');
   }
-
   const settlements = calcSettlement(data.expenses, data.members);
   if (settlements.length > 0) {
-    html += `
-      <div class="settlement-box" style="margin-top:16px">
-        <h3>結算建議</h3>
-        ${settlements.map(s => `<div class="settlement-item"><b>${s.from}</b> 需付給 <b>${s.to}</b>：NT$${s.amount.toLocaleString()}</div>`).join('')}
-      </div>
-    `;
+    html += `<div class="settlement-box" style="margin-top:14px"><h3>💡 結算建議</h3>${settlements.map(s=>`<div class="settlement-item"><b>${s.from}</b> 需付給 <b>${s.to}</b>：NT$${s.amount.toLocaleString()}</div>`).join('')}</div>`;
   }
-
   document.getElementById('tab-content-expenses').innerHTML = html;
 }
 
 function addMember() {
   const input = document.getElementById('new-member');
-  const name = input.value.trim();
-  if (!name) return;
+  const name = input.value.trim(); if (!name) return;
   const data = getExpenseData(currentTripId);
   data.members.push({ id: Date.now().toString(), name });
-  saveExpenseData(currentTripId, data);
-  input.value = '';
-  renderExpenses();
+  saveExpenseData(currentTripId, data); input.value = ''; renderExpenses();
 }
-
 function deleteMember(id) {
   const data = getExpenseData(currentTripId);
   data.members = data.members.filter(m => m.id !== id);
-  saveExpenseData(currentTripId, data);
-  renderExpenses();
+  saveExpenseData(currentTripId, data); renderExpenses();
 }
 
 function openExpenseModal() {
   const data = getExpenseData(currentTripId);
   if (data.members.length === 0) return alert('請先新增成員');
-  expPaidBy = '';
-  expParticipants = [];
+  expPaidBy = ''; expParticipants = [];
   document.getElementById('exp-desc').value = '';
   document.getElementById('exp-amount').value = '';
   document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
-
-  document.getElementById('exp-paidby-chips').innerHTML = data.members.map(m => `
-    <button class="toggle-chip" id="paidby-${m.name}" onclick="selectPaidBy('${m.name}')">${m.name}</button>
-  `).join('');
-  document.getElementById('exp-participants-chips').innerHTML = data.members.map(m => `
-    <button class="toggle-chip" id="part-${m.name}" onclick="toggleParticipant('${m.name}')">${m.name}</button>
-  `).join('');
-
+  document.getElementById('exp-paidby-chips').innerHTML = data.members.map(m=>`<button class="toggle-chip" id="paidby-${m.name}" onclick="selectPaidBy('${m.name}')">${m.name}</button>`).join('');
+  document.getElementById('exp-participants-chips').innerHTML = data.members.map(m=>`<button class="toggle-chip" id="part-${m.name}" onclick="toggleParticipant('${m.name}')">${m.name}</button>`).join('');
   document.getElementById('modal-expense').classList.remove('hidden');
 }
-
-function closeExpenseModal() {
-  document.getElementById('modal-expense').classList.add('hidden');
-}
+function closeExpenseModal() { document.getElementById('modal-expense').classList.add('hidden'); }
 
 function selectPaidBy(name) {
   expPaidBy = name;
-  const data = getExpenseData(currentTripId);
-  data.members.forEach(m => {
-    const el = document.getElementById('paidby-' + m.name);
-    if (el) el.className = 'toggle-chip' + (m.name === name ? ' selected-blue' : '');
-  });
+  document.querySelectorAll('#exp-paidby-chips .toggle-chip').forEach(el => el.className = 'toggle-chip' + (el.id === 'paidby-'+name ? ' selected-blue' : ''));
 }
-
 function toggleParticipant(name) {
-  if (expParticipants.includes(name)) expParticipants = expParticipants.filter(p => p !== name);
+  if (expParticipants.includes(name)) expParticipants = expParticipants.filter(p=>p!==name);
   else expParticipants.push(name);
-  const el = document.getElementById('part-' + name);
+  const el = document.getElementById('part-'+name);
   if (el) el.className = 'toggle-chip' + (expParticipants.includes(name) ? ' selected-green' : '');
 }
-
 function confirmAddExpense() {
   const desc = document.getElementById('exp-desc').value.trim();
   const amount = parseFloat(document.getElementById('exp-amount').value);
-  if (!desc || !amount || !expPaidBy || expParticipants.length === 0) return alert('請填寫所有欄位並選擇付款人和分攤成員');
+  if (!desc||!amount||!expPaidBy||expParticipants.length===0) return alert('請填寫所有欄位並選擇付款人和分攤成員');
   const data = getExpenseData(currentTripId);
-  data.expenses.push({
-    id: Date.now().toString(),
-    description: desc,
-    amount,
-    paidBy: expPaidBy,
-    participants: [...expParticipants],
-    date: document.getElementById('exp-date').value,
-  });
-  saveExpenseData(currentTripId, data);
-  closeExpenseModal();
-  renderExpenses();
+  data.expenses.push({ id: Date.now().toString(), description:desc, amount, paidBy:expPaidBy, participants:[...expParticipants], date:document.getElementById('exp-date').value });
+  saveExpenseData(currentTripId, data); closeExpenseModal(); renderExpenses();
 }
-
 function deleteExpense(id) {
   if (!confirm('確定刪除這筆費用？')) return;
   const data = getExpenseData(currentTripId);
   data.expenses = data.expenses.filter(e => e.id !== id);
-  saveExpenseData(currentTripId, data);
-  renderExpenses();
+  saveExpenseData(currentTripId, data); renderExpenses();
 }
-
 function calcSettlement(expenses, members) {
-  const balances = {};
-  members.forEach(m => balances[m.name] = 0);
+  const balances = {}; members.forEach(m => balances[m.name]=0);
   expenses.forEach(e => {
-    const share = e.amount / e.participants.length;
-    e.participants.forEach(p => { balances[p] = (balances[p] || 0) - share; });
-    balances[e.paidBy] = (balances[e.paidBy] || 0) + e.amount;
+    const share = e.amount/e.participants.length;
+    e.participants.forEach(p => { balances[p]=(balances[p]||0)-share; });
+    balances[e.paidBy]=(balances[e.paidBy]||0)+e.amount;
   });
-  const settlements = [];
-  const debtors = Object.entries(balances).filter(([,v]) => v < -0.01).sort(([,a],[,b]) => a - b).map(([n,v]) => ({name:n, amount:-v}));
-  const creditors = Object.entries(balances).filter(([,v]) => v > 0.01).sort(([,a],[,b]) => b - a).map(([n,v]) => ({name:n, amount:v}));
-  let di = 0, ci = 0;
-  while (di < debtors.length && ci < creditors.length) {
-    const pay = Math.min(debtors[di].amount, creditors[ci].amount);
-    settlements.push({ from: debtors[di].name, to: creditors[ci].name, amount: Math.round(pay) });
-    debtors[di].amount -= pay;
-    creditors[ci].amount -= pay;
-    if (debtors[di].amount < 0.01) di++;
-    if (creditors[ci].amount < 0.01) ci++;
-  }
+  const settlements=[], d=Object.entries(balances).filter(([,v])=>v<-0.01).sort(([,a],[,b])=>a-b).map(([n,v])=>({name:n,amount:-v})), c=Object.entries(balances).filter(([,v])=>v>0.01).sort(([,a],[,b])=>b-a).map(([n,v])=>({name:n,amount:v}));
+  let di=0,ci=0;
+  while(di<d.length&&ci<c.length){const pay=Math.min(d[di].amount,c[ci].amount);settlements.push({from:d[di].name,to:c[ci].name,amount:Math.round(pay)});d[di].amount-=pay;c[ci].amount-=pay;if(d[di].amount<0.01)di++;if(c[ci].amount<0.01)ci++;}
   return settlements;
 }
 
 // =================== 初始化 ===================
+checkShareParam();
 renderHome();
 </script>
 </body>
