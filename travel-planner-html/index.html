@@ -193,6 +193,33 @@
     .member-del-btn:hover { color: #e8946a; }
     .add-member-row { display: flex; gap: 8px; margin-top: 6px; }
 
+    /* Prep tab */
+    .prep-content { flex: 1; overflow-y: auto; padding: 14px 20px 80px; }
+    .prep-subtabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .prep-subtab { flex: 1; padding: 8px 4px; border: 1.5px solid #e0d8d0; border-radius: 10px; background: none; font-size: 13px; font-weight: 600; color: #9a8878; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .prep-subtab.active { background: #2d5080; color: white; border-color: #2d5080; }
+    .prep-member-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .prep-filter-chip { padding: 5px 12px; border-radius: 20px; border: 1.5px solid #e0d8d0; background: white; font-size: 12px; font-weight: 600; color: #9a8878; cursor: pointer; transition: all 0.2s; }
+    .prep-filter-chip.active { background: #2d5080; color: white; border-color: #2d5080; }
+    .prep-section { background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .prep-section-title { font-size: 13px; font-weight: 700; color: #2d5080; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+    .prep-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f5f0eb; }
+    .prep-item:last-child { border-bottom: none; }
+    .prep-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #d0c8c0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .prep-checkbox.checked { background: #2d5080; border-color: #2d5080; }
+    .prep-checkbox.checked::after { content: '✓'; color: white; font-size: 12px; font-weight: 700; }
+    .prep-item-text { flex: 1; font-size: 14px; color: #1a1a1a; transition: all 0.2s; }
+    .prep-item-text.checked { color: #bbb; text-decoration: line-through; }
+    .prep-item-owner { font-size: 11px; color: #bbb; flex-shrink: 0; }
+    .prep-item-del { background: none; border: none; color: #ddd; cursor: pointer; font-size: 16px; opacity: 0; transition: opacity 0.2s; padding: 0 4px; }
+    .prep-item:hover .prep-item-del { opacity: 1; }
+    .prep-add-row { display: flex; gap: 8px; margin-top: 12px; }
+    .prep-owner-sel { padding: 10px 10px; border: 1.5px solid #e0d8d0; border-radius: 10px; font-size: 13px; color: #555; background: white; }
+
+    /* Share button in topbar */
+    .share-btn { background: none; border: 1.5px solid #d0c8c0; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: #9a8878; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
+    .share-btn:hover { border-color: #2d5080; color: #2d5080; }
+
     /* Join modal */
     .join-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(4px); }
     .join-modal { background: #faf8f5; border-radius: 24px; width: 100%; max-width: 360px; padding: 28px 24px; text-align: center; animation: slideUp 0.3s ease; }
@@ -262,7 +289,10 @@
   <div class="trip-topbar">
     <div class="trip-topbar-row1">
       <button class="back-btn" onclick="goHome()">‹ 返回</button>
-      <span class="sync-badge" id="sync-status"></span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="sync-badge" id="sync-status"></span>
+        <button class="share-btn" onclick="shareTrip()">🔗 分享</button>
+      </div>
     </div>
     <div class="trip-title" id="trip-title-text"></div>
     <div class="trip-dates" id="trip-dates-text"></div>
@@ -292,16 +322,20 @@
     <div class="members-content" id="members-content"></div>
   </div>
 
+  <div id="tab-prep" class="hidden" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+    <div class="prep-content" id="prep-content"></div>
+  </div>
+
   <!-- 底部導航 -->
   <div class="bottom-nav">
     <button class="nav-item active" id="nav-itinerary" onclick="switchTab('itinerary')">
       <span class="nav-item-icon">📅</span>行程
     </button>
+    <button class="nav-item" id="nav-prep" onclick="switchTab('prep')">
+      <span class="nav-item-icon">✅</span>準備
+    </button>
     <button class="nav-item" id="nav-expenses" onclick="switchTab('expenses')">
       <span class="nav-item-icon">💰</span>分帳
-    </button>
-    <button class="nav-item" id="nav-share" onclick="shareTrip()">
-      <span class="nav-item-icon">🔗</span>分享
     </button>
     <button class="nav-item" id="nav-members" onclick="switchToMembers()">
       <span class="nav-item-icon">👥</span>成員
@@ -434,7 +468,7 @@ async function cloudSave(id, data) {
 async function saveAndSync() {
   if (!isCloudTrip) return;
   const trip = getTrips().find(t => t.id === currentTripId);
-  await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId) });
+  await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId), prepData: getPrepData(currentTripId) });
 }
 async function syncFromCloud() {
   if (isSyncing || !isCloudTrip) return;
@@ -444,19 +478,24 @@ async function syncFromCloud() {
     const trips = getTrips();
     const idx = trips.findIndex(t => t.id === currentTripId);
     const localExpData = getExpData(currentTripId);
+    const localPrepData = getPrepData(currentTripId);
     const tripChanged = JSON.stringify(trips[idx]) !== JSON.stringify(remote.trip);
     const expChanged = remote.expData && JSON.stringify(localExpData) !== JSON.stringify(remote.expData);
-    if (tripChanged || expChanged) {
+    const prepChanged = remote.prepData && JSON.stringify(localPrepData) !== JSON.stringify(remote.prepData);
+    if (tripChanged || expChanged || prepChanged) {
       if (tripChanged) {
         if (idx >= 0) trips[idx] = remote.trip; else trips.unshift(remote.trip);
         saveTrips(trips);
       }
       if (expChanged) saveExpData(currentTripId, remote.expData);
+      if (prepChanged) savePrepData(currentTripId, remote.prepData);
       renderDayContent();
       const membersTab = document.getElementById('tab-members');
       if (membersTab && !membersTab.classList.contains('hidden')) renderMembers();
       const expTab = document.getElementById('tab-expenses');
       if (expTab && !expTab.classList.contains('hidden')) renderExpenses();
+      const prepTab = document.getElementById('tab-prep');
+      if (prepTab && !prepTab.classList.contains('hidden')) renderPrep();
       setSyncStatus('ok');
     }
   }
@@ -471,7 +510,7 @@ async function shareTrip() {
   if (!trip) return;
   setSyncStatus('syncing');
   try {
-    await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId) });
+    await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId), prepData: getPrepData(currentTripId) });
     const url = `${location.href.split('?')[0]}?cloud=${currentTripId}`;
     try {
       if (navigator.clipboard) { await navigator.clipboard.writeText(url); showToast('🔗 共編連結已複製！'); }
@@ -508,6 +547,7 @@ async function loadCloudTrip(cloudId) {
   if (idx >= 0) trips[idx] = remote.trip; else trips.unshift(remote.trip);
   saveTrips(trips);
   if (remote.expData) saveExpData(cloudId, remote.expData);
+  if (remote.prepData) savePrepData(cloudId, remote.prepData);
   history.replaceState({}, '', location.pathname);
   showToast('✅ 共享行程已載入！');
   renderHome(); openTrip(cloudId, true);
@@ -623,14 +663,16 @@ function goHome() {
 }
 
 function switchTab(tab) {
-  ['itinerary','expenses','members'].forEach(t => {
+  ['itinerary','expenses','members','prep'].forEach(t => {
     document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
     document.getElementById('nav-' + t)?.classList.toggle('active', t === tab);
   });
-  document.getElementById('nav-share').classList.remove('active');
+  const dayTabsWrap = document.getElementById('day-tabs-wrap');
+  if (dayTabsWrap) dayTabsWrap.classList.toggle('hidden', tab !== 'itinerary');
   if (tab === 'itinerary') renderDayContent();
   else if (tab === 'expenses') renderExpenses();
   else if (tab === 'members') renderMembers();
+  else if (tab === 'prep') renderPrep();
 }
 function switchToMembers() { switchTab('members'); }
 
@@ -665,6 +707,90 @@ function addMemberFromTab() {
   if (d.members.find(m => m.name === name)) { el.value = ''; return; }
   d.members.push({ id: Date.now().toString(), name });
   saveExpData(currentTripId, d); el.value = ''; renderMembers(); saveAndSync();
+}
+
+// ===== 準備頁面 =====
+let prepSubtab = 'todo';
+let prepFilter = 'all';
+
+const getPrepData = id => JSON.parse(localStorage.getItem('prep_' + id) || '{"todo":[],"pack":[],"buy":[]}');
+const savePrepData = (id, d) => localStorage.setItem('prep_' + id, JSON.stringify(d));
+
+const prepSubtabInfo = [
+  { key: 'todo', label: '✅ 待辦', title: '待辦事項' },
+  { key: 'pack', label: '🎒 攜帶', title: '攜帶清單' },
+  { key: 'buy',  label: '🛍️ 想買', title: '購物清單' },
+];
+
+function renderPrep() {
+  const data = getPrepData(currentTripId);
+  const members = getExpData(currentTripId).members;
+  const myName = getMyName();
+
+  const subtabsHtml = prepSubtabInfo.map(s =>
+    `<button class="prep-subtab ${prepSubtab === s.key ? 'active' : ''}" onclick="setPrepSubtab('${s.key}')">${s.label}</button>`
+  ).join('');
+
+  const filterHtml = `
+    <div class="prep-member-filter">
+      <button class="prep-filter-chip ${prepFilter === 'all' ? 'active' : ''}" onclick="setPrepFilter('all')">共同</button>
+      ${members.map(m => `<button class="prep-filter-chip ${prepFilter === m.name ? 'active' : ''}" onclick="setPrepFilter('${m.name}')">${m.name}</button>`).join('')}
+    </div>`;
+
+  const items = (data[prepSubtab] || []).filter(item =>
+    prepFilter === 'all' ? (!item.owner || item.owner === 'all') : item.owner === prepFilter
+  );
+
+  const itemsHtml = items.map(item => `
+    <div class="prep-item" id="pitem-${item.id}">
+      <div class="prep-checkbox ${item.checked ? 'checked' : ''}" onclick="togglePrepItem('${item.id}')"></div>
+      <span class="prep-item-text ${item.checked ? 'checked' : ''}">${item.text}</span>
+      ${item.owner && item.owner !== 'all' ? `<span class="prep-item-owner">${item.owner}</span>` : ''}
+      <button class="prep-item-del" onclick="delPrepItem('${item.id}')">×</button>
+    </div>`).join('');
+
+  const ownerOpts = `<option value="all">共同</option>` +
+    members.map(m => `<option value="${m.name}" ${m.name === myName ? 'selected' : ''}>${m.name}</option>`).join('');
+
+  const info = prepSubtabInfo.find(s => s.key === prepSubtab);
+  document.getElementById('prep-content').innerHTML = `
+    <div class="prep-subtabs">${subtabsHtml}</div>
+    ${filterHtml}
+    <div class="prep-section">
+      <div class="prep-section-title">${info.title}<span style="font-size:11px;color:#bbb;font-weight:400">${items.length} 項</span></div>
+      ${itemsHtml || '<p style="color:#bbb;font-size:13px;text-align:center;padding:12px 0">清單是空的，加入第一項吧！</p>'}
+      <div class="prep-add-row">
+        <select class="prep-owner-sel" id="prep-owner">${ownerOpts}</select>
+        <input class="form-input" id="prep-new-text" placeholder="新增項目..." style="flex:1" onkeydown="if(event.key==='Enter')addPrepItem()" />
+        <button class="btn-submit" style="width:auto;padding:10px 14px" onclick="addPrepItem()">＋</button>
+      </div>
+    </div>`;
+}
+
+function setPrepSubtab(key) { prepSubtab = key; renderPrep(); }
+function setPrepFilter(f) { prepFilter = f; renderPrep(); }
+
+function addPrepItem() {
+  const text = document.getElementById('prep-new-text')?.value.trim();
+  if (!text) return;
+  const owner = document.getElementById('prep-owner')?.value || 'all';
+  const d = getPrepData(currentTripId);
+  d[prepSubtab].push({ id: Date.now().toString(), text, owner, checked: false });
+  savePrepData(currentTripId, d);
+  document.getElementById('prep-new-text').value = '';
+  renderPrep(); saveAndSync();
+}
+
+function togglePrepItem(id) {
+  const d = getPrepData(currentTripId);
+  const item = d[prepSubtab].find(i => i.id === id);
+  if (item) { item.checked = !item.checked; savePrepData(currentTripId, d); renderPrep(); saveAndSync(); }
+}
+
+function delPrepItem(id) {
+  const d = getPrepData(currentTripId);
+  d[prepSubtab] = d[prepSubtab].filter(i => i.id !== id);
+  savePrepData(currentTripId, d); renderPrep(); saveAndSync();
 }
 
 // ===== 加入行程彈窗 =====
