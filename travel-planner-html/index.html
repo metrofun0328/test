@@ -933,6 +933,7 @@ function openTrip(id, cloud = false) {
   document.getElementById('trip-dates-text').textContent = `${trip.startDate} - ${trip.endDate}`;
   document.getElementById('page-home').classList.add('hidden');
   document.getElementById('page-trip').classList.remove('hidden');
+  document.querySelector('.back-btn').style.display = cloud ? 'none' : '';
   renderDayTabs();
   switchTab('itinerary');
   if (cloud) { setSyncStatus('ok'); startSync(); }
