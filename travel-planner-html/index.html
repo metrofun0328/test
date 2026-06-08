@@ -83,15 +83,33 @@
     #page-trip { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
     /* Trip top bar */
-    .trip-topbar { background: #f5e8d8; padding: 50px 20px 12px; flex-shrink: 0; }
+    .trip-topbar { background: #f5e8d8; padding: 50px 20px 10px; flex-shrink: 0; }
     .trip-topbar-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
     .back-btn { background: none; border: none; font-size: 15px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500; padding: 0; }
-    .sync-badge { font-size: 12px; color: #2d5080; font-weight: 600; }
+    .trip-topbar-right { display: flex; align-items: center; gap: 6px; }
+    .sync-badge { font-size: 11px; color: #2d5080; font-weight: 600; }
+    .share-btn { background: none; border: 1.5px solid #d0c8c0; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: #9a8878; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; }
+    .share-btn:hover { border-color: #2d5080; color: #2d5080; }
     .trip-title { font-size: 20px; font-weight: 800; color: #1a1a1a; letter-spacing: -0.3px; }
     .trip-dates { font-size: 12px; color: #999; margin-top: 2px; }
 
+    /* Day banner */
+    .day-banner { position: relative; flex-shrink: 0; height: 120px; overflow: hidden; }
+    .day-banner-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #2d5080, #6080b0, #e8946a); background-size: 200% 200%; transition: background 0.4s; }
+    .day-banner-bg.has-img { background: none; }
+    .day-banner-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .day-banner-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.45)); }
+    .day-banner-content { position: relative; z-index: 2; height: 100%; display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 16px; }
+    .day-banner-left { display: flex; flex-direction: column; }
+    .day-banner-day { font-size: 22px; font-weight: 900; color: white; line-height: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    .day-banner-date { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 3px; }
+    .day-banner-weather { display: flex; align-items: center; gap: 6px; color: white; font-size: 13px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+    .day-banner-weather-icon { font-size: 22px; }
+    .day-banner-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .day-banner-upload-btn { background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.5); border-radius: 20px; padding: 5px 11px; color: white; font-size: 12px; font-weight: 600; cursor: pointer; backdrop-filter: blur(4px); }
+
     /* Day tabs */
-    .day-tabs-wrap { background: #f5e8d8; padding: 12px 20px 0; flex-shrink: 0; }
+    .day-tabs-wrap { background: #f5e8d8; padding: 10px 20px 0; flex-shrink: 0; }
     .day-tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 12px; }
     .day-tabs::-webkit-scrollbar { display: none; }
     .day-tab { flex-shrink: 0; padding: 8px 14px; border-radius: 10px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; background: #e8d8c8; color: #9a8878; text-align: center; line-height: 1.3; }
@@ -374,13 +392,30 @@
   <div class="trip-topbar">
     <div class="trip-topbar-row1">
       <button class="back-btn" onclick="goHome()">‹ 返回</button>
-      <div style="display:flex;align-items:center;gap:8px">
+      <div class="trip-topbar-right">
         <span class="sync-badge" id="sync-status"></span>
         <button class="share-btn" onclick="shareTrip()">🔗 分享</button>
       </div>
     </div>
     <div class="trip-title" id="trip-title-text"></div>
     <div class="trip-dates" id="trip-dates-text"></div>
+  </div>
+
+  <!-- 日期橫幅 -->
+  <div class="day-banner" id="day-banner">
+    <div class="day-banner-bg" id="day-banner-bg"></div>
+    <div class="day-banner-overlay"></div>
+    <div class="day-banner-content">
+      <div class="day-banner-left">
+        <div class="day-banner-day" id="day-banner-day">Day 1</div>
+        <div class="day-banner-date" id="day-banner-date"></div>
+        <div class="day-banner-weather" id="day-banner-weather"></div>
+      </div>
+      <div class="day-banner-actions">
+        <input type="file" id="day-img-input" accept="image/*" style="display:none" onchange="uploadDayImg(this)">
+        <button class="day-banner-upload-btn" onclick="document.getElementById('day-img-input').click()">📷 換圖</button>
+      </div>
+    </div>
   </div>
 
   <!-- 日期分頁 -->
@@ -1042,6 +1077,7 @@ function openTrip(id, cloud = false) {
   document.getElementById('page-trip').classList.remove('hidden');
   document.querySelector('.back-btn').style.display = cloud ? 'none' : '';
   renderDayTabs();
+  updateDayBanner();
   switchTab('itinerary');
   if (cloud) { setSyncStatus('ok'); startSync(); }
   else { document.getElementById('sync-status').textContent = ''; }
@@ -1061,6 +1097,8 @@ function switchTab(tab) {
   });
   const dayTabsWrap = document.getElementById('day-tabs-wrap');
   if (dayTabsWrap) dayTabsWrap.classList.toggle('hidden', tab !== 'itinerary');
+  const dayBanner = document.getElementById('day-banner');
+  if (dayBanner) dayBanner.classList.toggle('hidden', tab !== 'itinerary');
   if (tab === 'itinerary') renderDayContent();
   else if (tab === 'expenses') renderExpenses();
   else if (tab === 'members') renderMembers();
@@ -1225,7 +1263,7 @@ function renderDayTabs() {
 }
 
 function selectDay(idx) {
-  currentDayIdx = idx; renderDayTabs(); renderDayContent();
+  currentDayIdx = idx; renderDayTabs(); renderDayContent(); updateDayBanner();
 }
 
 // ===== 編輯模式 =====
@@ -1818,6 +1856,73 @@ function delBooking(type, id) {
   saveBookingData(currentTripId, d);
   renderBooking();
   saveAndSync();
+}
+
+// ===== 日期橫幅 =====
+const WMO_ICON = { 0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',56:'🌧️',57:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',66:'🌧️',67:'🌧️',71:'❄️',73:'❄️',75:'❄️',77:'❄️',80:'🌧️',81:'🌧️',82:'🌧️',85:'❄️',86:'❄️',95:'⛈️',96:'⛈️',99:'⛈️' };
+const getDayImg = (tripId, idx) => localStorage.getItem(`dayimg_${tripId}_${idx}`);
+const saveDayImg = (tripId, idx, b64) => { try { localStorage.setItem(`dayimg_${tripId}_${idx}`, b64); } catch { showToast('⚠️ 圖片太大，無法儲存'); } };
+
+async function updateDayBanner() {
+  const trip = getTrips().find(t => t.id === currentTripId);
+  if (!trip) return;
+  const day = trip.days[currentDayIdx];
+  document.getElementById('day-banner-day').textContent = `Day ${day.day}`;
+  document.getElementById('day-banner-date').textContent = day.date;
+
+  // 背景圖片
+  const bg = document.getElementById('day-banner-bg');
+  const savedImg = getDayImg(currentTripId, currentDayIdx);
+  if (savedImg) {
+    bg.className = 'day-banner-bg has-img';
+    bg.innerHTML = `<img src="${savedImg}" alt="">`;
+  } else {
+    const gradients = [
+      'linear-gradient(135deg,#2d5080,#6080b0,#e8946a)',
+      'linear-gradient(135deg,#4a7a50,#6a9a70,#d4a843)',
+      'linear-gradient(135deg,#7a4050,#b06080,#e8c46a)',
+      'linear-gradient(135deg,#4a5080,#8060b0,#60a8d8)',
+      'linear-gradient(135deg,#805040,#b08060,#e8d06a)',
+      'linear-gradient(135deg,#305060,#508090,#80c0b0)',
+    ];
+    bg.className = 'day-banner-bg';
+    bg.innerHTML = '';
+    bg.style.background = gradients[currentDayIdx % gradients.length];
+  }
+
+  // 天氣（僅在日期在今天起 16 天內才嘗試抓取）
+  const weatherEl = document.getElementById('day-banner-weather');
+  weatherEl.innerHTML = '';
+  try {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const tripDate = new Date(day.date); tripDate.setHours(0,0,0,0);
+    const diffDays = (tripDate - today) / 86400000;
+    if (diffDays >= 0 && diffDays <= 15 && trip.destination) {
+      const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(trip.destination)}&count=1&language=zh`).then(r=>r.json());
+      if (geo.results?.[0]) {
+        const { latitude: lat, longitude: lon } = geo.results[0];
+        const wx = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${day.date}&end_date=${day.date}`).then(r=>r.json());
+        if (wx.daily?.weather_code?.[0] !== undefined) {
+          const code = wx.daily.weather_code[0];
+          const tmax = Math.round(wx.daily.temperature_2m_max[0]);
+          const tmin = Math.round(wx.daily.temperature_2m_min[0]);
+          weatherEl.innerHTML = `<span class="day-banner-weather-icon">${WMO_ICON[code]||'🌡️'}</span><span>${tmin}°～${tmax}°C</span>`;
+        }
+      }
+    }
+  } catch {}
+}
+
+function uploadDayImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    saveDayImg(currentTripId, currentDayIdx, e.target.result);
+    updateDayBanner();
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
 }
 
 // ===== 回頂按鈕 =====
