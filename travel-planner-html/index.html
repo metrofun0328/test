@@ -414,6 +414,7 @@
       <div class="day-banner-actions">
         <input type="file" id="day-img-input" accept="image/*" style="display:none" onchange="uploadDayImg(this)">
         <button class="day-banner-upload-btn" onclick="document.getElementById('day-img-input').click()">📷</button>
+        <button class="day-banner-upload-btn" id="day-img-remove-btn" onclick="removeDayImg()" style="display:none;font-size:14px">✕</button>
       </div>
     </div>
   </div>
@@ -1873,10 +1874,13 @@ async function updateDayBanner() {
   // 背景圖片
   const bg = document.getElementById('day-banner-bg');
   const savedImg = getDayImg(currentTripId, currentDayIdx);
+  const removeBtn = document.getElementById('day-img-remove-btn');
   if (savedImg) {
     bg.className = 'day-banner-bg has-img';
     bg.innerHTML = `<img src="${savedImg}" alt="">`;
+    if (removeBtn) removeBtn.style.display = 'flex';
   } else {
+    if (removeBtn) removeBtn.style.display = 'none';
     const gradients = [
       'linear-gradient(135deg,#2d5080,#6080b0,#e8946a)',
       'linear-gradient(135deg,#4a7a50,#6a9a70,#d4a843)',
@@ -1923,6 +1927,10 @@ function uploadDayImg(input) {
   };
   reader.readAsDataURL(file);
   input.value = '';
+}
+function removeDayImg() {
+  localStorage.removeItem(`dayimg_${currentTripId}_${currentDayIdx}`);
+  updateDayBanner();
 }
 
 // ===== 回頂按鈕 =====
