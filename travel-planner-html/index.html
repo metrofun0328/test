@@ -796,12 +796,41 @@ async function shareTrip() {
   try {
     await cloudSave(currentTripId, { trip, expData: getExpData(currentTripId), prepData: getPrepData(currentTripId), bookingData: getBookingData(currentTripId) });
     const url = `${location.href.split('?')[0]}?cloud=${currentTripId}`;
-    try {
-      if (navigator.clipboard) { await navigator.clipboard.writeText(url); showToast('🔗 共編連結已複製！'); }
-      else { prompt('複製此連結傳給旅伴：', url); }
-    } catch { prompt('複製此連結傳給旅伴：', url); }
     setSyncStatus('ok');
+    showShareModal(url);
   } catch(e) { showToast('❌ 分享失敗，請稍後再試'); setSyncStatus('error'); console.error(e); }
+}
+
+function showShareModal(url) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'share-modal';
+  overlay.innerHTML = `
+    <div class="modal" style="max-width:360px">
+      <div class="modal-header">
+        <h3>🔗 共享行程連結</h3>
+        <button class="form-close" onclick="document.getElementById('share-modal').remove()">✕</button>
+      </div>
+      <p style="font-size:13px;color:#888;margin-bottom:12px">將此連結傳給旅伴，他們可以直接加入並共同編輯行程</p>
+      <div style="display:flex;align-items:center;gap:8px;background:#f5f0eb;border-radius:12px;padding:12px 14px;margin-bottom:14px">
+        <span style="flex:1;font-size:12px;color:#555;word-break:break-all;line-height:1.5">${url}</span>
+      </div>
+      <button id="share-copy-btn" onclick="copyShareUrl('${url}')" style="width:100%;padding:13px;background:#2d5080;color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        📋 一鍵複製
+      </button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function copyShareUrl(url) {
+  const btn = document.getElementById('share-copy-btn');
+  try {
+    if (navigator.clipboard) await navigator.clipboard.writeText(url);
+    else { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+    btn.textContent = '✅ 已複製！';
+    btn.style.background = '#4a7a50';
+    setTimeout(() => { document.getElementById('share-modal')?.remove(); }, 1200);
+  } catch { btn.textContent = '❌ 複製失敗，請手動複製'; }
 }
 
 function showToast(msg) {
@@ -833,7 +862,6 @@ async function loadCloudTrip(cloudId) {
   if (remote.expData) saveExpData(cloudId, remote.expData);
   if (remote.prepData) savePrepData(cloudId, remote.prepData);
   if (remote.bookingData) saveBookingData(cloudId, remote.bookingData);
-  history.replaceState({}, '', location.pathname);
   showToast('✅ 共享行程已載入！');
   renderHome(); openTrip(cloudId, true);
 
