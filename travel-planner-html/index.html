@@ -84,21 +84,21 @@
 
     /* Trip top bar */
     .trip-topbar { background: #f5e8d8; padding: 50px 20px 10px; flex-shrink: 0; }
-    .trip-topbar-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-    .back-btn { background: none; border: none; font-size: 15px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500; padding: 0; }
-    .trip-topbar-right { display: flex; align-items: center; gap: 6px; }
-    .sync-badge { font-size: 11px; color: #2d5080; font-weight: 600; }
-    .share-btn { background: none; border: 1.5px solid #d0c8c0; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: #9a8878; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; }
+    .trip-topbar-row1 { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; box-sizing: border-box; }
+    .back-btn { background: none; border: none; font-size: 15px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500; padding: 0; flex-shrink: 0; }
+    .trip-topbar-right { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+    .sync-badge { font-size: 11px; color: #2d5080; font-weight: 600; white-space: nowrap; }
+    .share-btn { background: none; border: 1.5px solid #d0c8c0; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: #9a8878; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; white-space: nowrap; }
     .share-btn:hover { border-color: #2d5080; color: #2d5080; }
     .trip-title { font-size: 20px; font-weight: 800; color: #1a1a1a; letter-spacing: -0.3px; }
     .trip-dates { font-size: 12px; color: #999; margin-top: 2px; }
 
     /* Day banner */
-    .day-banner { position: relative; flex-shrink: 0; height: 120px; overflow: hidden; }
-    .day-banner-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #2d5080, #6080b0, #e8946a); background-size: 200% 200%; transition: background 0.4s; }
+    .day-banner { position: relative; flex-shrink: 0; height: 120px; overflow: hidden; margin: 10px 16px 0; border-radius: 16px; }
+    .day-banner-bg { position: absolute; inset: 0; border-radius: 16px; background: linear-gradient(135deg, #2d5080, #6080b0, #e8946a); transition: background 0.4s; }
     .day-banner-bg.has-img { background: none; }
-    .day-banner-bg img { width: 100%; height: 100%; object-fit: cover; }
-    .day-banner-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.45)); }
+    .day-banner-bg img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+    .day-banner-overlay { position: absolute; inset: 0; border-radius: 16px; background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.45)); }
     .day-banner-content { position: relative; z-index: 2; height: 100%; display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 16px; }
     .day-banner-left { display: flex; flex-direction: column; }
     .day-banner-day { font-size: 22px; font-weight: 900; color: white; line-height: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
@@ -106,11 +106,11 @@
     .day-banner-weather { display: flex; align-items: center; gap: 6px; color: white; font-size: 13px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
     .day-banner-weather-icon { font-size: 22px; }
     .day-banner-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .day-banner-upload-btn { background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.5); border-radius: 20px; padding: 5px 11px; color: white; font-size: 12px; font-weight: 600; cursor: pointer; backdrop-filter: blur(4px); }
+    .day-banner-upload-btn { background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.5); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; cursor: pointer; backdrop-filter: blur(4px); padding: 0; }
 
     /* Day tabs */
-    .day-tabs-wrap { background: #f5e8d8; padding: 10px 20px 0; flex-shrink: 0; }
-    .day-tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 12px; }
+    .day-tabs-wrap { background: #f5e8d8; padding: 10px 16px 0; flex-shrink: 0; }
+    .day-tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 12px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.10)); }
     .day-tabs::-webkit-scrollbar { display: none; }
     .day-tab { flex-shrink: 0; padding: 8px 14px; border-radius: 10px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; background: #e8d8c8; color: #9a8878; text-align: center; line-height: 1.3; }
     .day-tab.active { background: #2d5080; color: white; }
@@ -413,7 +413,7 @@
       </div>
       <div class="day-banner-actions">
         <input type="file" id="day-img-input" accept="image/*" style="display:none" onchange="uploadDayImg(this)">
-        <button class="day-banner-upload-btn" onclick="document.getElementById('day-img-input').click()">📷 換圖</button>
+        <button class="day-banner-upload-btn" onclick="document.getElementById('day-img-input').click()">📷</button>
       </div>
     </div>
   </div>
