@@ -833,7 +833,6 @@ async function loadCloudTrip(cloudId) {
   if (remote.expData) saveExpData(cloudId, remote.expData);
   if (remote.prepData) savePrepData(cloudId, remote.prepData);
   if (remote.bookingData) saveBookingData(cloudId, remote.bookingData);
-  history.replaceState({}, '', location.pathname);
   showToast('✅ 共享行程已載入！');
   renderHome(); openTrip(cloudId, true);
 
