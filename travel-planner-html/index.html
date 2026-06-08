@@ -824,13 +824,36 @@ function showShareModal(url) {
 
 async function copyShareUrl(url) {
   const btn = document.getElementById('share-copy-btn');
-  try {
-    if (navigator.clipboard) await navigator.clipboard.writeText(url);
-    else { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+  let success = false;
+
+  // 方法一：現代 Clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
+    try { await navigator.clipboard.writeText(url); success = true; } catch {}
+  }
+
+  // 方法二：iOS Safari 專用（用 input + setSelectionRange）
+  if (!success) {
+    try {
+      const el = document.createElement('input');
+      el.value = url;
+      el.setAttribute('readonly', '');
+      el.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+      document.body.appendChild(el);
+      el.focus();
+      el.setSelectionRange(0, 9999);
+      success = document.execCommand('copy');
+      document.body.removeChild(el);
+    } catch {}
+  }
+
+  if (success) {
     btn.textContent = '✅ 已複製！';
     btn.style.background = '#4a7a50';
     setTimeout(() => { document.getElementById('share-modal')?.remove(); }, 1200);
-  } catch { btn.textContent = '❌ 複製失敗，請手動複製'; }
+  } else {
+    btn.textContent = '請長按連結手動複製';
+    btn.style.background = '#9a8878';
+  }
 }
 
 function showToast(msg) {
