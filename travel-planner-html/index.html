@@ -312,6 +312,9 @@
 
     /* Toast */
     .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 999; animation: fadeInUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); white-space: nowrap; }
+    /* 回頂按鈕 */
+    .scroll-top-btn { position: fixed; right: 18px; bottom: 90px; width: 40px; height: 40px; border-radius: 50%; background: #2d5080; color: white; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 12px rgba(45,80,128,0.35); z-index: 99; display: none; align-items: center; justify-content: center; transition: all 0.2s; }
+    .scroll-top-btn:active { transform: scale(0.88); }
     @keyframes fadeInUp { from { opacity:0; transform: translate(-50%,10px); } to { opacity:1; transform: translate(-50%,0); } }
   </style>
 </head>
@@ -432,6 +435,9 @@
   </div>
 </div>
 
+<!-- 回頂按鈕 -->
+<button class="scroll-top-btn" id="scroll-top-btn" onclick="scrollToTop()" title="回到頂部">↑</button>
+
 <!-- ===== 新增活動 Modal ===== -->
 <div id="modal-activity" class="modal-overlay hidden">
   <div class="modal">
@@ -542,6 +548,55 @@
       <div class="toggle-chips" id="exp-participants-chips"></div>
     </div>
     <button class="btn-submit" onclick="confirmAddExpense()" style="margin-top:6px">確認新增</button>
+  </div>
+</div>
+
+<!-- ===== 編輯費用 Modal ===== -->
+<div id="modal-edit-expense" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>✏️ 編輯費用</h3>
+      <button class="form-close" onclick="closeEditExpenseModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">費用說明 *</label>
+      <input class="form-input" id="edit-exp-desc" placeholder="例如：午餐" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">金額</label>
+        <input class="form-input" id="edit-exp-amount" type="number" placeholder="0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">幣別</label>
+        <select class="form-input" id="edit-exp-currency">
+          <option value="TWD">TWD</option><option value="JPY">JPY</option><option value="USD">USD</option>
+          <option value="EUR">EUR</option><option value="KRW">KRW</option><option value="HKD">HKD</option>
+          <option value="CNY">CNY</option><option value="GBP">GBP</option><option value="THB">THB</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">日期</label>
+        <input class="form-input" id="edit-exp-date" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">付款方式</label>
+        <select class="form-input" id="edit-exp-payment">
+          <option>信用卡</option><option>現金</option><option>行動支付</option><option>其他</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">由誰付款</label>
+      <div class="toggle-chips" id="edit-exp-paidby-chips"></div>
+    </div>
+    <div class="form-group" style="margin-top:10px">
+      <label class="form-label">分攤成員</label>
+      <div class="toggle-chips" id="edit-exp-participants-chips"></div>
+    </div>
+    <button class="btn-submit" onclick="confirmEditExpense()" style="margin-top:6px">儲存</button>
   </div>
 </div>
 
@@ -1342,6 +1397,7 @@ function renderExpenses() {
               <div class="exp-item-amt">${e.currency||'TWD'} ${Number(e.amount).toLocaleString()}</div>
               ${showConverted ? `<div class="exp-item-converted">≈ NT$${twdAmt.toLocaleString()}</div>` : ''}
             </div>
+            <button class="exp-item-del" style="font-size:14px;color:#9a8878" onclick="openEditExpenseModal('${e.id}')">✏️</button>
             <button class="exp-item-del" onclick="delExpense('${e.id}')">×</button>
           </div>`;
         }).join('')}
@@ -1509,6 +1565,59 @@ function delExpense(id) {
   d.expenses = d.expenses.filter(e => e.id !== id);
   saveExpData(currentTripId, d); renderExpenses(); saveAndSync();
 }
+
+let editingExpenseId = null;
+let editExpPaidBy = '', editExpParticipants = [];
+function openEditExpenseModal(id) {
+  const d = getExpData(currentTripId);
+  const e = d.expenses.find(x => x.id === id);
+  if (!e) return;
+  editingExpenseId = id;
+  editExpPaidBy = e.paidBy || '';
+  editExpParticipants = [...(e.participants || [])];
+  document.getElementById('edit-exp-desc').value = e.description || '';
+  document.getElementById('edit-exp-amount').value = e.amount || '';
+  document.getElementById('edit-exp-currency').value = e.currency || 'TWD';
+  document.getElementById('edit-exp-date').value = e.date || '';
+  document.getElementById('edit-exp-payment').value = e.payment || '信用卡';
+  const members = d.members;
+  document.getElementById('edit-exp-paidby-chips').innerHTML = members.map(m =>
+    `<button class="toggle-chip ${editExpPaidBy===m.name?'sel-blue':''}" id="epb-${m.name}" onclick="editSelPaidBy('${m.name}')">${m.name}</button>`
+  ).join('');
+  document.getElementById('edit-exp-participants-chips').innerHTML = members.map(m =>
+    `<button class="toggle-chip ${editExpParticipants.includes(m.name)?'sel-green':''}" id="ept-${m.name}" onclick="editTogPart('${m.name}')">${m.name}</button>`
+  ).join('');
+  document.getElementById('modal-edit-expense').classList.remove('hidden');
+}
+function closeEditExpenseModal() { document.getElementById('modal-edit-expense').classList.add('hidden'); }
+function editSelPaidBy(name) {
+  editExpPaidBy = name;
+  document.querySelectorAll('#edit-exp-paidby-chips .toggle-chip').forEach(el => el.className = 'toggle-chip' + (el.id==='epb-'+name?' sel-blue':''));
+}
+function editTogPart(name) {
+  editExpParticipants = editExpParticipants.includes(name) ? editExpParticipants.filter(p=>p!==name) : [...editExpParticipants, name];
+  const el = document.getElementById('ept-'+name);
+  if (el) el.className = 'toggle-chip' + (editExpParticipants.includes(name) ? ' sel-green' : '');
+}
+function confirmEditExpense() {
+  const desc = document.getElementById('edit-exp-desc').value.trim();
+  const amount = parseFloat(document.getElementById('edit-exp-amount').value);
+  if (!desc || !amount || !editExpPaidBy || !editExpParticipants.length) return alert('請填寫所有欄位');
+  const d = getExpData(currentTripId);
+  const idx = d.expenses.findIndex(e => e.id === editingExpenseId);
+  if (idx < 0) return;
+  d.expenses[idx] = { ...d.expenses[idx],
+    description: desc, amount,
+    currency: document.getElementById('edit-exp-currency').value,
+    date: document.getElementById('edit-exp-date').value,
+    payment: document.getElementById('edit-exp-payment').value,
+    paidBy: editExpPaidBy,
+    participants: [...editExpParticipants],
+  };
+  saveExpData(currentTripId, d);
+  closeEditExpenseModal(); renderExpenses(); saveAndSync();
+}
+
 function calcSettlement(expenses, members) {
   const b = {}; members.forEach(m => b[m.name]=0);
   expenses.forEach(e => { const amt = toTWD(e.amount, e.currency||'TWD'); const s=amt/e.participants.length; e.participants.forEach(p=>{b[p]=(b[p]||0)-s;}); b[e.paidBy]=(b[e.paidBy]||0)+amt; });
@@ -1710,6 +1819,45 @@ function delBooking(type, id) {
   renderBooking();
   saveAndSync();
 }
+
+// ===== 回頂按鈕 =====
+function getActiveScrollEl() {
+  const tabs = ['activity-list','expense-content','members-content','prep-content','booking-content'];
+  for (const id of tabs) {
+    const el = document.getElementById(id);
+    if (el && !el.closest('.hidden') && el.scrollTop > 0) return el;
+    if (el && !el.closest('[style*="display: none"]') && !el.closest('.hidden')) {
+      if (el.scrollTop > 0) return el;
+    }
+  }
+  return null;
+}
+function scrollToTop() {
+  const tabs = ['activity-list','expense-content','members-content','prep-content','booking-content'];
+  tabs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+function updateScrollTopBtn() {
+  const tabs = ['activity-list','expense-content','members-content','prep-content','booking-content'];
+  const btn = document.getElementById('scroll-top-btn');
+  if (!btn) return;
+  const anyScrolled = tabs.some(id => {
+    const el = document.getElementById(id);
+    return el && el.scrollTop > 80;
+  });
+  btn.style.display = anyScrolled ? 'flex' : 'none';
+}
+['activity-list','expense-content','members-content','prep-content','booking-content'].forEach(id => {
+  document.addEventListener('scroll', updateScrollTopBtn, true);
+});
+setTimeout(() => {
+  ['activity-list','expense-content','members-content','prep-content','booking-content'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('scroll', updateScrollTopBtn);
+  });
+}, 500);
 
 // ===== 初始化 =====
 checkShareParam();
