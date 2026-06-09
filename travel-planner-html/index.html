@@ -63,7 +63,7 @@
     .form-card-header h2 { font-size: 17px; font-weight: 700; }
     .form-close { background: #f0ede8; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; }
     .form-label { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #e0d0c0; border-radius: 10px; font-size: 14px; outline: none; background: #fdf6ee; color: #1a1a1a; transition: border-color 0.2s; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #e0d0c0; border-radius: 10px; font-size: 16px; outline: none; background: #fdf6ee; color: #1a1a1a; transition: border-color 0.2s; }
     .form-input:focus { border-color: #2d5080; background: white; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .form-group { margin-bottom: 14px; }
@@ -402,8 +402,8 @@
     .app.light .btn-new { background: #4A5BBF; box-shadow: 0 4px 14px rgba(74,91,191,0.1); }
     .app.light .form-card { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
     .app.light .form-label { color: #8e8e93; }
-    .app.light .form-input { background: #f2f2f7; border-color: #e5e5ea; color: #1c1c1e; }
-    .app.light .form-input:focus { border-color: #4A5BBF; background: #fff; }
+    .app.light .form-input { background: #ffffff; border-color: #c7c7cc; color: #1c1c1e; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .app.light .form-input:focus { border-color: #4A5BBF; background: #fff; box-shadow: 0 0 0 3px rgba(74,91,191,0.12); }
     .app.light .form-close { background: #f2f2f7; color: #6e6e73; border: none; }
     .app.light .btn-submit { background: #4A5BBF; }
     .app.light .import-banner { background: #eef3fb; border-color: #b8cfec; }
@@ -458,8 +458,9 @@
     .app.light .bottom-nav { background: #4A5BBF; box-shadow: 0 -2px 16px rgba(74,91,191,0.1); }
 
     /* Expenses */
-    .app.light .exp-subtabs { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: none; }
-    .app.light .exp-subtab { color: #6e6e73; }
+    .app.light .exp-subtabs { background: #ffffff; border: 1px solid #d1d1d6; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .app.light .exp-subtab { color: #3a3a3c; font-weight: 700; }
+    .app.light .exp-subtab.active { background: #4a7a50; color: white; }
     .app.light .exp-filter-chip { background: #ffffff; border-color: #e5e5ea; color: #6e6e73; }
     .app.light .exp-date-label { color: #8e8e93; }
     .app.light .exp-date-subtotal { color: #8e8e93; }
@@ -469,8 +470,8 @@
     .app.light .exp-item-amt { color: #1c1c1e; }
     .app.light .exp-item-converted { color: #aeaeb2; }
     .app.light .exp-item-del { color: #d1d1d6; }
-    .app.light .exp-currency-sel { background: #f2f2f7; border-color: #e5e5ea; color: #1c1c1e; }
-    .app.light .payment-chip { border-color: #e5e5ea; color: #6e6e73; }
+    .app.light .exp-currency-sel { background: #ffffff; border-color: #c7c7cc; color: #1c1c1e; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .app.light .payment-chip { border-color: #c7c7cc; color: #3a3a3c; background: #ffffff; }
     .app.light .dashed-btn { border-color: #d1d1d6; color: #aeaeb2; }
     .app.light .dashed-btn:hover { border-color: #4A5BBF; color: #4A5BBF; }
     .app.light .section-title { color: #8e8e93; }
@@ -514,7 +515,7 @@
     .app.light .join-modal h2 { color: #4A5BBF; }
     .app.light .join-modal p { color: #8e8e93; }
     .app.light .join-modal input { background: #f2f2f7; border-color: #e5e5ea; color: #1c1c1e; }
-    .app.light .toggle-chip { border-color: #e5e5ea; color: #6e6e73; }
+    .app.light .toggle-chip { border-color: #c7c7cc; color: #3a3a3c; background: #ffffff; }
     .app.light .toggle-chip.sel-blue { background: #4A5BBF; border-color: #4A5BBF; color: white; }
 
     /* Misc */
