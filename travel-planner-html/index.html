@@ -120,8 +120,13 @@
     /* Edit mode toggle */
     .edit-toggle { margin: 10px 20px; background: white; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 4px rgba(0,0,0,0.07); flex-shrink: 0; }
     .edit-toggle-label { font-size: 13px; color: #888; display: flex; align-items: center; gap: 6px; }
-    .edit-toggle-btn { background: #2d5080; color: white; border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
-    .edit-toggle-btn.viewing { background: #e8d8c8; color: #9a8878; }
+    /* iOS-style toggle switch */
+    .toggle-switch { position: relative; width: 50px; height: 28px; flex-shrink: 0; cursor: pointer; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track { position: absolute; inset: 0; border-radius: 28px; background: #d1d1d6; transition: background 0.25s ease; }
+    .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.25); transition: transform 0.25s ease; }
+    .toggle-switch input:checked ~ .toggle-track { background: #2d5080; }
+    .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(22px); }
 
     /* Activity list */
     .activity-list { flex: 1; overflow-y: auto; padding: 8px 20px 80px; }
@@ -416,8 +421,7 @@
     /* Edit toggle */
     .app.light .edit-toggle { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .app.light .edit-toggle-label { color: #8e8e93; }
-    .app.light .edit-toggle-btn { background: #4A5BBF; }
-    .app.light .edit-toggle-btn.viewing { background: #e5e5ea; color: #6e6e73; }
+    .app.light .toggle-switch input:checked ~ .toggle-track { background: #4A5BBF; }
 
     /* Activity items */
     .app.light .activity-item { background: #ffffff; border-color: #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -557,8 +561,8 @@
     /* Edit toggle */
     .app.dark .edit-toggle { background: #252b3b; box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
     .app.dark .edit-toggle-label { color: #8892aa; }
-    .app.dark .edit-toggle-btn { background: #4a9eff; }
-    .app.dark .edit-toggle-btn.viewing { background: #2e3548; color: #8892aa; }
+    .app.dark .toggle-track { background: #3d4560; }
+    .app.dark .toggle-switch input:checked ~ .toggle-track { background: #4a9eff; }
 
     /* Activity items */
     .app.dark .activity-item { background: #252b3b; border-color: rgba(255,255,255,0.04); }
@@ -769,8 +773,12 @@
   <div id="tab-itinerary" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
     <!-- 編輯模式切換 -->
     <div class="edit-toggle">
-      <span class="edit-toggle-label" id="edit-label">🔒 目前為瀏覽模式</span>
-      <button class="edit-toggle-btn viewing" id="edit-btn" onclick="toggleEdit()">解鎖編輯</button>
+      <span class="edit-toggle-label" id="edit-label">🔒 瀏覽模式</span>
+      <label class="toggle-switch" onclick="toggleEdit()">
+        <input type="checkbox" id="edit-checkbox" />
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
     </div>
     <!-- 活動列表 -->
     <div class="activity-list" id="activity-list"></div>
@@ -1611,10 +1619,8 @@ function selectDay(idx) {
 // ===== 編輯模式 =====
 function toggleEdit() {
   editMode = !editMode;
-  document.getElementById('edit-label').textContent = editMode ? '✏️ 編輯模式' : '🔒 目前為瀏覽模式';
-  const btn = document.getElementById('edit-btn');
-  btn.textContent = editMode ? '完成編輯' : '解鎖編輯';
-  btn.className = 'edit-toggle-btn' + (editMode ? '' : ' viewing');
+  document.getElementById('edit-label').textContent = editMode ? '✏️ 編輯模式' : '🔒 瀏覽模式';
+  document.getElementById('edit-checkbox').checked = editMode;
   renderDayContent();
 }
 
