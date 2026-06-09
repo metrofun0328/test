@@ -365,10 +365,148 @@
       .theme-fab { right: 10px; }
     }
     .app.light .theme-fab {
-      background: rgba(45,80,128,0.1);
-      border-color: rgba(45,80,128,0.2);
+      background: rgba(45,80,128,0.08);
+      border-color: rgba(45,80,128,0.18);
       color: #2d5080;
     }
+
+    /* ===== LIGHT MODE OVERRIDES (Minimal White) ===== */
+    body.theme-light { background: #e5e5ea; }
+
+    .app.light {
+      background: #f2f2f7;
+      background-image: none;
+    }
+
+    /* Home */
+    .app.light .home-header h1 { color: #1c1c1e; }
+    .app.light .home-header p { color: #8e8e93; }
+    .app.light .trip-card { background: #ffffff; border-color: #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
+    .app.light .trip-card-title { color: #1c1c1e; }
+    .app.light .trip-card-date { color: #8e8e93; }
+    .app.light .trip-card-emoji { background: #f2f2f7; }
+    .app.light .trip-card-arrow { color: #c7c7cc; }
+    .app.light .trip-card-del { color: #c7c7cc; }
+    .app.light .btn-new { background: #2d5080; box-shadow: 0 4px 14px rgba(45,80,128,0.25); }
+    .app.light .form-card { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .app.light .form-label { color: #8e8e93; }
+    .app.light .form-input { background: #f2f2f7; border-color: #e5e5ea; color: #1c1c1e; }
+    .app.light .form-input:focus { border-color: #2d5080; background: #fff; }
+    .app.light .form-close { background: #f2f2f7; color: #6e6e73; border: none; }
+    .app.light .btn-submit { background: #2d5080; }
+    .app.light .import-banner { background: #eef3fb; border-color: #b8cfec; }
+    .app.light .import-banner p { color: #2d5080; }
+    .app.light .empty { color: #c7c7cc; }
+
+    /* Trip topbar */
+    .app.light .trip-topbar { background: #f2f2f7; }
+    .app.light .back-btn { color: #6e6e73; }
+    .app.light .sync-badge { color: #2d5080; }
+    .app.light .share-btn { border-color: #e5e5ea; color: #6e6e73; }
+    .app.light .share-btn:hover { border-color: #2d5080; color: #2d5080; }
+    .app.light .trip-title { color: #1c1c1e; }
+    .app.light .trip-dates { color: #8e8e93; }
+
+    /* Day tabs */
+    .app.light .day-tabs-wrap { background: #f2f2f7; }
+    .app.light .day-tab { background: #e5e5ea; color: #6e6e73; }
+    .app.light .day-tab.active { background: #2d5080; color: white; }
+
+    /* Edit toggle */
+    .app.light .edit-toggle { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .app.light .edit-toggle-label { color: #8e8e93; }
+    .app.light .edit-toggle-btn { background: #2d5080; }
+    .app.light .edit-toggle-btn.viewing { background: #e5e5ea; color: #6e6e73; }
+
+    /* Activity items */
+    .app.light .activity-item { background: #ffffff; border-color: #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .app.light .activity-time-txt { color: #aeaeb2; }
+    .app.light .activity-name { color: #1c1c1e; }
+    .app.light .activity-chevron { color: #c7c7cc; }
+    .app.light .activity-detail { border-top-color: #f2f2f7; }
+    .app.light .activity-detail-desc { color: #8e8e93; }
+    .app.light .activity-detail-cost { color: #2d5080; }
+    .app.light .btn-del-activity { border-color: #e5e5ea; color: #c7c7cc; }
+    .app.light .add-activity-row { border-color: #d1d1d6; color: #aeaeb2; }
+    .app.light .add-activity-row:hover { border-color: #2d5080; color: #2d5080; background: #f0f4fa; }
+    .app.light .empty-day-msg { color: #c7c7cc; }
+    .app.light .map-card { background: #f2f2f7; border-color: #e5e5ea; }
+    .app.light .map-card-title { color: #1c1c1e; }
+    .app.light .map-card-sub { color: #aeaeb2; }
+
+    /* Tags */
+    .app.light .tag-attraction { background: #e5eef8; color: #2d5080; }
+    .app.light .tag-food { background: #faebd8; color: #c06030; }
+    .app.light .tag-transport { background: #eeeef0; color: #5a6070; }
+    .app.light .tag-accommodation { background: #edeae5; color: #7a6858; }
+    .app.light .tag-other { background: #e5eaf5; color: #4060a0; }
+
+    /* Bottom nav */
+    .app.light .bottom-nav { background: #2d5080; box-shadow: 0 -2px 16px rgba(45,80,128,0.18); }
+
+    /* Expenses */
+    .app.light .exp-subtabs { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: none; }
+    .app.light .exp-subtab { color: #6e6e73; }
+    .app.light .exp-filter-chip { background: #ffffff; border-color: #e5e5ea; color: #6e6e73; }
+    .app.light .exp-date-label { color: #8e8e93; }
+    .app.light .exp-date-subtotal { color: #8e8e93; }
+    .app.light .exp-item { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .app.light .exp-item-desc { color: #1c1c1e; }
+    .app.light .exp-item-meta { color: #aeaeb2; }
+    .app.light .exp-item-amt { color: #1c1c1e; }
+    .app.light .exp-item-converted { color: #aeaeb2; }
+    .app.light .exp-item-del { color: #d1d1d6; }
+    .app.light .exp-currency-sel { background: #f2f2f7; border-color: #e5e5ea; color: #1c1c1e; }
+    .app.light .payment-chip { border-color: #e5e5ea; color: #6e6e73; }
+    .app.light .dashed-btn { border-color: #d1d1d6; color: #aeaeb2; }
+    .app.light .dashed-btn:hover { border-color: #2d5080; color: #2d5080; }
+    .app.light .section-title { color: #8e8e93; }
+
+    /* Members */
+    .app.light .member-card { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .app.light .member-name { color: #1c1c1e; }
+    .app.light .member-del-btn { color: #d1d1d6; }
+    .app.light .member-chip { background: #e5eef8; color: #2d5080; }
+
+    /* Prep */
+    .app.light .prep-subtab { border-color: #e5e5ea; color: #6e6e73; background: none; }
+    .app.light .prep-subtab.active { background: #2d5080; border-color: #2d5080; color: white; }
+    .app.light .prep-filter-chip { border-color: #e5e5ea; background: #ffffff; color: #6e6e73; }
+    .app.light .prep-filter-chip.active { background: #2d5080; border-color: #2d5080; color: white; }
+    .app.light .prep-section { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .app.light .prep-section-title { color: #2d5080; }
+    .app.light .prep-item { border-bottom-color: #f2f2f7; }
+    .app.light .prep-item-text { color: #1c1c1e; }
+    .app.light .prep-item-text.checked { color: #c7c7cc; }
+    .app.light .prep-item-owner { color: #c7c7cc; }
+    .app.light .prep-checkbox { border-color: #d1d1d6; background: #ffffff; }
+    .app.light .prep-checkbox.checked { background: #2d5080; border-color: #2d5080; }
+    .app.light .prep-owner-sel { background: #f2f2f7; border-color: #e5e5ea; color: #1c1c1e; }
+
+    /* Booking */
+    .app.light .booking-subtabs { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: none; }
+    .app.light .booking-subtab { color: #6e6e73; }
+    .app.light .booking-subtab.active { background: #f2f2f7; color: #2d5080; }
+    .app.light .booking-card { background: #ffffff; border: 1px solid #e5e5ea; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .app.light .bc-title { color: #1c1c1e; }
+    .app.light .bc-sub { color: #aeaeb2; }
+    .app.light .bc-note { background: #f2f2f7; color: #6e6e73; }
+    .app.light .bc-member-chip { background: #e5eef8; color: #2d5080; }
+    .app.light .bc-del-btn { color: #d1d1d6; }
+
+    /* Modals */
+    .app.light .modal { background: #ffffff; border: 1px solid #e5e5ea; }
+    .app.light .modal-header h3 { color: #1c1c1e; }
+    .app.light .join-modal { background: #ffffff; }
+    .app.light .join-modal h2 { color: #2d5080; }
+    .app.light .join-modal p { color: #8e8e93; }
+    .app.light .join-modal input { background: #f2f2f7; border-color: #e5e5ea; color: #1c1c1e; }
+    .app.light .toggle-chip { border-color: #e5e5ea; color: #6e6e73; }
+    .app.light .toggle-chip.sel-blue { background: #2d5080; border-color: #2d5080; color: white; }
+
+    /* Misc */
+    .app.light .scroll-top-btn { background: #2d5080; box-shadow: 0 4px 12px rgba(45,80,128,0.25); }
+    .app.light .toast { background: #1c1c1e; color: #ffffff; }
 
     /* ===== DARK MODE OVERRIDES ===== */
     /* Body */
@@ -2180,11 +2318,11 @@ function initTheme() {
   const fab = document.getElementById('theme-fab');
   if (saved === 'dark') {
     app.classList.add('dark'); app.classList.remove('light');
-    document.body.classList.add('theme-dark');
+    document.body.classList.add('theme-dark'); document.body.classList.remove('theme-light');
     fab.textContent = '🌙';
   } else {
     app.classList.add('light'); app.classList.remove('dark');
-    document.body.classList.remove('theme-dark');
+    document.body.classList.add('theme-light'); document.body.classList.remove('theme-dark');
     fab.textContent = '☀️';
   }
 }
@@ -2194,12 +2332,12 @@ function toggleTheme() {
   const isDark = app.classList.contains('dark');
   if (isDark) {
     app.classList.remove('dark'); app.classList.add('light');
-    document.body.classList.remove('theme-dark');
+    document.body.classList.add('theme-light'); document.body.classList.remove('theme-dark');
     fab.textContent = '☀️';
     localStorage.setItem('theme', 'light');
   } else {
     app.classList.remove('light'); app.classList.add('dark');
-    document.body.classList.add('theme-dark');
+    document.body.classList.add('theme-dark'); document.body.classList.remove('theme-light');
     fab.textContent = '🌙';
     localStorage.setItem('theme', 'dark');
   }
