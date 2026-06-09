@@ -774,8 +774,8 @@
     <!-- 編輯模式切換 -->
     <div class="edit-toggle">
       <span class="edit-toggle-label" id="edit-label">🔒 瀏覽模式</span>
-      <label class="toggle-switch" onclick="toggleEdit()">
-        <input type="checkbox" id="edit-checkbox" />
+      <label class="toggle-switch">
+        <input type="checkbox" id="edit-checkbox" onchange="toggleEdit()" />
         <div class="toggle-track"></div>
         <div class="toggle-thumb"></div>
       </label>
@@ -1618,9 +1618,8 @@ function selectDay(idx) {
 
 // ===== 編輯模式 =====
 function toggleEdit() {
-  editMode = !editMode;
+  editMode = document.getElementById('edit-checkbox').checked;
   document.getElementById('edit-label').textContent = editMode ? '✏️ 編輯模式' : '🔒 瀏覽模式';
-  document.getElementById('edit-checkbox').checked = editMode;
   renderDayContent();
 }
 
