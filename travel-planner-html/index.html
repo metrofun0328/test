@@ -347,6 +347,10 @@
     body, .app, .app * {
       transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
     }
+    /* Restore slide animation overridden by the global transition rule above */
+    .activity-detail {
+      transition: max-height 0.3s ease, padding 0.3s ease, background-color 0.35s ease, border-color 0.35s ease !important;
+    }
 
     /* ===== THEME FAB ===== */
     .theme-fab {
