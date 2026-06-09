@@ -2398,23 +2398,28 @@ function toggleTheme() {
   }
 }
 
-// ===== iOS 鍵盤收起後還原 viewport =====
-if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-  // Use visualViewport API for reliable keyboard detection
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      const keyboardVisible = window.visualViewport.height < window.screen.height * 0.75;
-      if (!keyboardVisible) {
-        // Keyboard just hid — restore scroll position
-        setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 50);
-      }
-    });
-  } else {
-    // Fallback for older iOS
-    document.addEventListener('focusout', () => {
-      setTimeout(() => window.scrollTo(0, 0), 350);
+// ===== iOS 鍵盤：讓 modal 跟著可視區域 =====
+if (/iPad|iPhone|iPod/.test(navigator.userAgent) && window.visualViewport) {
+  const MODAL_SELECTORS = '.modal-overlay:not(.hidden), .join-modal-overlay:not(.hidden)';
+  function syncModalsToViewport() {
+    const vv = window.visualViewport;
+    document.querySelectorAll(MODAL_SELECTORS).forEach(el => {
+      el.style.top    = vv.offsetTop + 'px';
+      el.style.height = vv.height + 'px';
     });
   }
+  function resetModals() {
+    document.querySelectorAll('.modal-overlay, .join-modal-overlay').forEach(el => {
+      el.style.top = '';
+      el.style.height = '';
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  window.visualViewport.addEventListener('resize', () => {
+    const keyboardVisible = window.visualViewport.height < window.screen.height * 0.75;
+    keyboardVisible ? syncModalsToViewport() : resetModals();
+  });
+  window.visualViewport.addEventListener('scroll', syncModalsToViewport);
 }
 
 // ===== 初始化 =====
