@@ -542,9 +542,9 @@
     .app.dark .form-card { background: #252b3b; }
     .app.dark .form-card-header h2 { color: #f0f4ff; }
     .app.dark .form-label { color: #8892aa; }
-    .app.dark .form-input { background: #2e3548; border-color: #3d4560; color: #f0f4ff; }
+    .app.dark .form-input { background-color: #2e3548; background-image: none; border-color: #3d4560; color: #f0f4ff; }
     .app.dark .form-input:focus { border-color: #4a9eff; background: #363d55; }
-    .app.dark select.form-input { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238892aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+    .app.dark select.form-input { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238892aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
     .app.dark .form-close { background: #2e3548; color: #8892aa; }
     .app.dark .btn-submit { background: #4a9eff; }
     .app.dark .import-banner { background: #1e2d48; border-color: #2d4a70; }
@@ -2400,13 +2400,21 @@ function toggleTheme() {
 
 // ===== iOS 鍵盤收起後還原 viewport =====
 if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-  document.addEventListener('focusout', () => {
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      document.documentElement.style.height = '';
-      document.body.style.height = '';
-    }, 100);
-  });
+  // Use visualViewport API for reliable keyboard detection
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      const keyboardVisible = window.visualViewport.height < window.screen.height * 0.75;
+      if (!keyboardVisible) {
+        // Keyboard just hid — restore scroll position
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 50);
+      }
+    });
+  } else {
+    // Fallback for older iOS
+    document.addEventListener('focusout', () => {
+      setTimeout(() => window.scrollTo(0, 0), 350);
+    });
+  }
 }
 
 // ===== 初始化 =====
