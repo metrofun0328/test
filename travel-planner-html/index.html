@@ -141,7 +141,8 @@
     .activity-name { flex: 1; font-size: 14px; font-weight: 600; color: #1a1a1a; }
     .activity-chevron { color: #ccc; font-size: 12px; transition: transform 0.2s; }
     .activity-chevron.open { transform: rotate(180deg); }
-    .activity-detail { padding: 0 14px 13px 74px; border-top: 1px solid #f5f0e8; }
+    .activity-detail { padding: 0 14px 0 74px; border-top: 1px solid #f5f0e8; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+    .activity-detail.open { max-height: 400px; padding: 0 14px 13px 74px; }
     .activity-detail-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; margin-bottom: 6px; }
     .tag-attraction { background: #dce8f5; color: #2d5080; }
     .tag-food { background: #fae0d0; color: #c06030; }
@@ -1294,7 +1295,7 @@ function renderDayContent() {
           <span class="activity-name">${a.title}</span>
           <span class="activity-chevron" id="chev-${a.id}">▼</span>
         </div>
-        <div class="activity-detail hidden" id="detail-${a.id}">
+        <div class="activity-detail" id="detail-${a.id}">
           <span class="activity-detail-tag ${tagClass[a.category]}">${catEmoji[a.category]} ${catLabel[a.category]}</span>
           ${a.description ? `<div class="activity-detail-desc">${a.description}</div>` : ''}
           ${a.estimatedCost > 0 ? `<div class="activity-detail-cost">💰 NT$${a.estimatedCost.toLocaleString()}</div>` : ''}
@@ -1321,9 +1322,8 @@ function renderDayContent() {
 function toggleActDetail(id) {
   const det = document.getElementById('detail-' + id);
   const chev = document.getElementById('chev-' + id);
-  const open = det.classList.toggle('hidden');
-  chev.classList.toggle('open', !open);
-  chev.textContent = open ? '▼' : '▲';
+  const isOpen = det.classList.toggle('open');
+  chev.textContent = isOpen ? '▲' : '▼';
 }
 
 function openActivityModal(idx) {
