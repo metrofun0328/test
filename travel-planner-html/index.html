@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="theme-color" content="#2d5080" />
+  <meta name="theme-color" content="#1e2438" id="meta-theme-color" />
   <title>旅遊規劃</title>
   <link rel="manifest" href="manifest.json" />
   <style>
@@ -2313,6 +2313,10 @@ setTimeout(() => {
 }, 500);
 
 // ===== 主題切換 =====
+const THEME_COLORS = { dark: '#1e2438', light: '#4A5BBF' };
+function setThemeColor(theme) {
+  document.getElementById('meta-theme-color').setAttribute('content', THEME_COLORS[theme]);
+}
 function initTheme() {
   const saved = localStorage.getItem('theme') || 'dark';
   const app = document.getElementById('app');
@@ -2326,6 +2330,7 @@ function initTheme() {
     document.body.classList.add('theme-light'); document.body.classList.remove('theme-dark');
     fab.textContent = '☀️';
   }
+  setThemeColor(saved);
 }
 function toggleTheme() {
   const app = document.getElementById('app');
@@ -2336,11 +2341,13 @@ function toggleTheme() {
     document.body.classList.add('theme-light'); document.body.classList.remove('theme-dark');
     fab.textContent = '☀️';
     localStorage.setItem('theme', 'light');
+    setThemeColor('light');
   } else {
     app.classList.remove('light'); app.classList.add('dark');
     document.body.classList.add('theme-dark'); document.body.classList.remove('theme-light');
     fab.textContent = '🌙';
     localStorage.setItem('theme', 'dark');
+    setThemeColor('dark');
   }
 }
 
