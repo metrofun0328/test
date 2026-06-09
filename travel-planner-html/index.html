@@ -2357,6 +2357,17 @@ function toggleTheme() {
   }
 }
 
+// ===== iOS 鍵盤收起後還原 viewport =====
+if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+  document.addEventListener('focusout', () => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.style.height = '';
+      document.body.style.height = '';
+    }, 100);
+  });
+}
+
 // ===== 初始化 =====
 initTheme();
 checkShareParam();
