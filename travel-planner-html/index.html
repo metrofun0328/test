@@ -167,6 +167,8 @@
     .activity-detail-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
     .btn-del-activity { background: none; border: 1px solid #eee; border-radius: 8px; padding: 5px 12px; font-size: 12px; color: #ccc; cursor: pointer; transition: all 0.2s; }
     .btn-del-activity:hover { border-color: #e57373; color: #e57373; }
+    .btn-edit-activity { background: none; border: 1px solid #eee; border-radius: 8px; padding: 5px 12px; font-size: 12px; color: #888; cursor: pointer; transition: all 0.2s; }
+    .btn-edit-activity:hover { border-color: #2d5080; color: #2d5080; }
 
     /* Add activity btn */
     .add-activity-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; border: 1.5px dashed #d0c0b0; border-radius: 12px; margin-bottom: 8px; color: #b0a090; font-size: 13px; font-weight: 500; transition: all 0.2s; }
@@ -432,6 +434,8 @@
     .app.light .activity-detail-desc { color: #8e8e93; }
     .app.light .activity-detail-cost { color: #4A5BBF; }
     .app.light .btn-del-activity { border-color: #e5e5ea; color: #c7c7cc; }
+    .app.light .btn-edit-activity { border-color: #e5e5ea; color: #8e8e93; }
+    .app.light .btn-edit-activity:hover { border-color: #4A5BBF; color: #4A5BBF; }
     .app.light .add-activity-row { border-color: #d1d1d6; color: #aeaeb2; }
     .app.light .add-activity-row:hover { border-color: #4A5BBF; color: #4A5BBF; background: #f0f4fa; }
     .app.light .empty-day-msg { color: #c7c7cc; }
@@ -575,6 +579,8 @@
     .app.dark .activity-detail-loc { color: #4a9eff; }
     .app.dark .btn-del-activity { border-color: #2e3548; color: #3d4a6a; }
     .app.dark .btn-del-activity:hover { border-color: #e57373; color: #e57373; }
+    .app.dark .btn-edit-activity { border-color: #2e3548; color: #6070a0; }
+    .app.dark .btn-edit-activity:hover { border-color: #4a9eff; color: #4a9eff; }
     .app.dark .add-activity-row { border-color: #2e3548; color: #3d4a6a; }
     .app.dark .add-activity-row:hover { border-color: #4a9eff; color: #4a9eff; background: #1e2d40; }
     .app.dark .empty-day-msg { color: #3d4a6a; }
@@ -774,8 +780,8 @@
     <!-- 編輯模式切換 -->
     <div class="edit-toggle">
       <span class="edit-toggle-label" id="edit-label">🔒 瀏覽模式</span>
-      <label class="toggle-switch" onclick="toggleEdit()">
-        <input type="checkbox" id="edit-checkbox" />
+      <label class="toggle-switch">
+        <input type="checkbox" id="edit-checkbox" onchange="toggleEdit()" />
         <div class="toggle-track"></div>
         <div class="toggle-thumb"></div>
       </label>
@@ -827,7 +833,7 @@
 <div id="modal-activity" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-header">
-      <h3>新增活動</h3>
+      <h3 id="act-modal-title">新增活動</h3>
       <button class="form-close" onclick="closeActivityModal()">✕</button>
     </div>
     <div class="form-row">
@@ -872,7 +878,7 @@
       <label class="form-label">預估費用（NT$）</label>
       <input class="form-input" id="act-cost" type="number" placeholder="0" />
     </div>
-    <button class="btn-submit" onclick="confirmAddActivity()">新增活動</button>
+    <button class="btn-submit" id="act-modal-submit" onclick="confirmAddActivity()">新增活動</button>
   </div>
 </div>
 
@@ -1618,9 +1624,8 @@ function selectDay(idx) {
 
 // ===== 編輯模式 =====
 function toggleEdit() {
-  editMode = !editMode;
+  editMode = document.getElementById('edit-checkbox').checked;
   document.getElementById('edit-label').textContent = editMode ? '✏️ 編輯模式' : '🔒 瀏覽模式';
-  document.getElementById('edit-checkbox').checked = editMode;
   renderDayContent();
 }
 
@@ -1654,7 +1659,7 @@ function renderDayContent() {
               </div>
               <span class="map-card-btn">🗺 開啟</span>
             </a>` : ''}
-          ${editMode ? `<div class="activity-detail-actions"><button class="btn-del-activity" onclick="delActivity('${a.id}')">刪除</button></div>` : ''}
+          ${editMode ? `<div class="activity-detail-actions"><button class="btn-edit-activity" onclick="openEditActivityModal('${a.id}')">編輯</button><button class="btn-del-activity" onclick="delActivity('${a.id}')">刪除</button></div>` : ''}
         </div>
       </div>
     `;
@@ -1672,11 +1677,33 @@ function toggleActDetail(id) {
   chev.textContent = isOpen ? '▲' : '▼';
 }
 
+let editingActivityId = null;
 function openActivityModal(idx) {
   addingDayIndex = idx;
+  editingActivityId = null;
   ['act-title','act-location','act-desc','act-cost'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('act-time').value = '09:00';
   document.getElementById('act-category').value = 'attraction';
+  document.getElementById('act-modal-title').textContent = '新增活動';
+  document.getElementById('act-modal-submit').textContent = '新增活動';
+  document.getElementById('map-preview').style.display = 'none';
+  document.getElementById('modal-activity').classList.remove('hidden');
+}
+function openEditActivityModal(actId) {
+  const trip = getTrips().find(t => t.id === currentTripId);
+  let a;
+  trip.days.forEach(d => { const found = d.activities.find(x => x.id === actId); if (found) a = found; });
+  if (!a) return;
+  editingActivityId = actId;
+  document.getElementById('act-time').value = a.time || '09:00';
+  document.getElementById('act-category').value = a.category || 'attraction';
+  document.getElementById('act-title').value = a.title || '';
+  document.getElementById('act-location').value = a.location || '';
+  document.getElementById('act-desc').value = a.description || '';
+  document.getElementById('act-cost').value = a.estimatedCost || '';
+  document.getElementById('act-modal-title').textContent = '編輯活動';
+  document.getElementById('act-modal-submit').textContent = '儲存變更';
+  previewMapCard(a.location || '');
   document.getElementById('modal-activity').classList.remove('hidden');
 }
 function closeActivityModal() {
@@ -1692,9 +1719,19 @@ function previewMapCard(val) {
 function confirmAddActivity() {
   const title = document.getElementById('act-title').value.trim();
   if (!title) return alert('請填寫活動名稱');
-  const a = { id: Date.now().toString(), time: document.getElementById('act-time').value, title, location: document.getElementById('act-location').value.trim(), description: document.getElementById('act-desc').value.trim(), category: document.getElementById('act-category').value, estimatedCost: parseInt(document.getElementById('act-cost').value)||0 };
   const trips = getTrips();
-  trips.find(t => t.id === currentTripId).days[addingDayIndex].activities.push(a);
+  const trip = trips.find(t => t.id === currentTripId);
+  if (editingActivityId) {
+    trip.days.forEach(d => {
+      const idx = d.activities.findIndex(x => x.id === editingActivityId);
+      if (idx !== -1) {
+        d.activities[idx] = { ...d.activities[idx], time: document.getElementById('act-time').value, title, location: document.getElementById('act-location').value.trim(), description: document.getElementById('act-desc').value.trim(), category: document.getElementById('act-category').value, estimatedCost: parseInt(document.getElementById('act-cost').value)||0 };
+      }
+    });
+  } else {
+    const a = { id: Date.now().toString(), time: document.getElementById('act-time').value, title, location: document.getElementById('act-location').value.trim(), description: document.getElementById('act-desc').value.trim(), category: document.getElementById('act-category').value, estimatedCost: parseInt(document.getElementById('act-cost').value)||0 };
+    trip.days[addingDayIndex].activities.push(a);
+  }
   saveTrips(trips); closeActivityModal(); renderDayContent(); saveAndSync();
 }
 function delActivity(actId) {
