@@ -704,12 +704,12 @@
 <!-- ===== 首頁 ===== -->
 <div id="page-home" class="page">
   <div class="home-header">
-    <h1>我的旅程 ✈️</h1>
+    <h1>我的旅程 <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="vertical-align:middle"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></h1>
     <p>點選行程開始規劃</p>
   </div>
 
   <div id="import-banner" class="import-banner hidden">
-    <p>📩 收到一份共享行程！</p>
+    <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="vertical-align:middle"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 收到一份共享行程！</p>
     <button onclick="importSharedTrip()">匯入行程</button>
   </div>
 
@@ -743,7 +743,7 @@
 
   <div id="trip-list"></div>
   <div id="empty-state" class="empty hidden">
-    <div class="empty-icon">🗺️</div>
+    <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="52" height="52"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
     <p>還沒有行程，出發吧！</p>
   </div>
 </div>
@@ -756,7 +756,7 @@
       <button class="back-btn" onclick="goHome()">‹ 返回</button>
       <div class="trip-topbar-right">
         <span class="sync-badge" id="sync-status"></span>
-        <button class="share-btn" onclick="shareTrip()">🔗 分享</button>
+        <button class="share-btn" onclick="shareTrip()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="vertical-align:middle"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg> 分享</button>
       </div>
     </div>
     <div class="trip-title" id="trip-title-text"></div>
@@ -775,7 +775,7 @@
       </div>
       <div class="day-banner-actions">
         <input type="file" id="day-img-input" accept="image/*" style="display:none" onchange="uploadDayImg(this)">
-        <button class="day-banner-upload-btn" onclick="document.getElementById('day-img-input').click()">📷</button>
+        <button class="day-banner-upload-btn" onclick="document.getElementById('day-img-input').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
         <button class="day-banner-upload-btn" id="day-img-remove-btn" onclick="removeDayImg()" style="display:none;font-size:14px">✕</button>
       </div>
     </div>
@@ -790,7 +790,7 @@
   <div id="tab-itinerary" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
     <!-- 編輯模式切換 -->
     <div class="edit-toggle">
-      <span class="edit-toggle-label" id="edit-label">🔒 瀏覽模式</span>
+      <span class="edit-toggle-label" id="edit-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="vertical-align:middle"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> 瀏覽模式</span>
       <label class="toggle-switch">
         <input type="checkbox" id="edit-checkbox" onchange="toggleEdit()" />
         <div class="toggle-track"></div>
@@ -858,7 +858,7 @@
 </div>
 
 <!-- 回頂按鈕 -->
-<button class="scroll-top-btn" id="scroll-top-btn" onclick="scrollToTop()" title="回到頂部">↑</button>
+<button class="scroll-top-btn" id="scroll-top-btn" onclick="scrollToTop()" title="回到頂部"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
 <!-- ===== 新增活動 Modal ===== -->
 <div id="modal-activity" class="modal-overlay hidden">
@@ -892,7 +892,7 @@
       <input class="form-input" id="act-location" placeholder="輸入地點名稱，點擊可開啟 Google Maps" oninput="previewMapCard(this.value)" />
       <div id="map-preview" style="display:none;margin-top:6px">
         <div class="map-card" style="cursor:default">
-          <span class="map-card-icon">📍</span>
+          <span class="map-card-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg></span>
           <div class="map-card-body">
             <div class="map-card-title">Google 地圖</div>
             <div class="map-card-sub" id="map-preview-text"></div>
@@ -977,7 +977,7 @@
 <div id="modal-edit-expense" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-header">
-      <h3>✏️ 編輯費用</h3>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="vertical-align:middle"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 編輯費用</h3>
       <button class="form-close" onclick="closeEditExpenseModal()">✕</button>
     </div>
     <div class="form-group">
@@ -1025,7 +1025,7 @@
 <!-- ===== 新增機票 Modal ===== -->
 <div id="modal-flight" class="modal-overlay hidden">
   <div class="modal">
-    <div class="modal-header"><h3>✈️ 新增機票</h3><button class="form-close" onclick="closeBookingModal('flight')">✕</button></div>
+    <div class="modal-header"><h3>新增機票</h3><button class="form-close" onclick="closeBookingModal('flight')">✕</button></div>
     <div class="form-group">
       <label class="form-label">航空公司 / 航班號</label>
       <div class="form-row" style="margin:0">
@@ -1096,7 +1096,7 @@
 <!-- ===== 新增住宿 Modal ===== -->
 <div id="modal-hotel" class="modal-overlay hidden">
   <div class="modal">
-    <div class="modal-header"><h3>🏨 新增住宿</h3><button class="form-close" onclick="closeBookingModal('hotel')">✕</button></div>
+    <div class="modal-header"><h3>新增住宿</h3><button class="form-close" onclick="closeBookingModal('hotel')">✕</button></div>
     <div class="form-group"><label class="form-label">住宿名稱 *</label><input class="form-input" id="ht-name" placeholder="例如：廣島 APA Hotel" /></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">入住日期</label><input class="form-input" id="ht-checkin" type="date" /></div>
@@ -1117,7 +1117,7 @@
 <!-- ===== 新增租車 Modal ===== -->
 <div id="modal-car" class="modal-overlay hidden">
   <div class="modal">
-    <div class="modal-header"><h3>🚗 新增租車</h3><button class="form-close" onclick="closeBookingModal('car')">✕</button></div>
+    <div class="modal-header"><h3>新增租車</h3><button class="form-close" onclick="closeBookingModal('car')">✕</button></div>
     <div class="form-group"><label class="form-label">租車公司 / 車型 *</label><input class="form-input" id="car-name" placeholder="例如：Toyota RAV4" /></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">取車日期</label><input class="form-input" id="car-pickup" type="date" /></div>
@@ -1138,7 +1138,7 @@
 <!-- ===== 新增票券 Modal ===== -->
 <div id="modal-ticket" class="modal-overlay hidden">
   <div class="modal">
-    <div class="modal-header"><h3>🎟 新增票券</h3><button class="form-close" onclick="closeBookingModal('ticket')">✕</button></div>
+    <div class="modal-header"><h3>新增票券</h3><button class="form-close" onclick="closeBookingModal('ticket')">✕</button></div>
     <div class="form-group"><label class="form-label">票券名稱 *</label><input class="form-input" id="tk-name" placeholder="例如：廣島一日乘車券" /></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">使用日期</label><input class="form-input" id="tk-date" type="date" /></div>
@@ -1285,7 +1285,7 @@ function showShareModal(url) {
   overlay.innerHTML = `
     <div class="modal" style="max-width:360px">
       <div class="modal-header">
-        <h3>🔗 共享行程連結</h3>
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="vertical-align:middle"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg> 共享行程連結</h3>
         <button class="form-close" onclick="document.getElementById('share-modal').remove()">✕</button>
       </div>
       <p style="font-size:13px;color:#888;margin-bottom:12px">將此連結傳給旅伴，他們可以直接加入並共同編輯行程</p>
@@ -1656,7 +1656,7 @@ function selectDay(idx) {
 // ===== 編輯模式 =====
 function toggleEdit() {
   editMode = document.getElementById('edit-checkbox').checked;
-  document.getElementById('edit-label').textContent = editMode ? '✏️ 編輯模式' : '🔒 瀏覽模式';
+  document.getElementById('edit-label').innerHTML = editMode ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="vertical-align:middle"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 編輯模式' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="vertical-align:middle"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> 瀏覽模式';
   renderDayContent();
 }
 
@@ -1680,15 +1680,15 @@ function renderDayContent() {
         <div class="activity-detail" id="detail-${a.id}">
           <span class="activity-detail-tag ${tagClass[a.category]}">${catEmoji[a.category]} ${catLabel[a.category]}</span>
           ${a.description ? `<div class="activity-detail-desc">${a.description}</div>` : ''}
-          ${a.estimatedCost > 0 ? `<div class="activity-detail-cost">💰 NT$${a.estimatedCost.toLocaleString()}</div>` : ''}
+          ${a.estimatedCost > 0 ? `<div class="activity-detail-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="vertical-align:middle"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><circle cx="12" cy="14" r="2"/></svg> NT$${a.estimatedCost.toLocaleString()}</div>` : ''}
           ${a.location ? `
             <a class="map-card" href="https://www.google.com/maps/search/${encodeURIComponent(a.location)}" target="_blank">
-              <span class="map-card-icon">📍</span>
+              <span class="map-card-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg></span>
               <div class="map-card-body">
                 <div class="map-card-title">Google 地圖</div>
                 <div class="map-card-sub">${a.location}</div>
               </div>
-              <span class="map-card-btn">🗺 開啟</span>
+              <span class="map-card-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="vertical-align:middle"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg> 開啟</span>
             </a>` : ''}
           ${editMode ? `<div class="activity-detail-actions"><button class="btn-edit-activity" onclick="openEditActivityModal('${a.id}')">編輯</button><button class="btn-del-activity" onclick="delActivity('${a.id}')">刪除</button></div>` : ''}
         </div>
@@ -1784,8 +1784,8 @@ function renderExpenses() {
 
   const subtabsHtml = `
     <div class="exp-subtabs">
-      <button class="exp-subtab ${expSubtab==='record'?'active':''}" onclick="setExpSubtab('record')">✏️ 記帳</button>
-      <button class="exp-subtab ${expSubtab==='detail'?'active':''}" onclick="setExpSubtab('detail')">🗒 明細</button>
+      <button class="exp-subtab ${expSubtab==='record'?'active':''}" onclick="setExpSubtab('record')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="vertical-align:middle"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 記帳</button>
+      <button class="exp-subtab ${expSubtab==='detail'?'active':''}" onclick="setExpSubtab('detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="vertical-align:middle"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> 明細</button>
     </div>`;
 
   if (expSubtab === 'record') {
@@ -1850,7 +1850,7 @@ function renderExpenses() {
               <div class="exp-item-amt">${e.currency||'TWD'} ${Number(e.amount).toLocaleString()}</div>
               ${showConverted ? `<div class="exp-item-converted">≈ NT$${twdAmt.toLocaleString()}</div>` : ''}
             </div>
-            <button class="exp-item-del" style="font-size:14px;color:#9a8878" onclick="openEditExpenseModal('${e.id}')">✏️</button>
+            <button class="exp-item-del" style="font-size:14px;color:#9a8878" onclick="openEditExpenseModal('${e.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
             <button class="exp-item-del" onclick="delExpense('${e.id}')">×</button>
           </div>`;
         }).join('')}
@@ -1882,8 +1882,8 @@ function renderExpRecord(data, trip) {
   const membersExist = data.members.length > 0;
   document.getElementById('expense-content').innerHTML = `
     <div class="exp-subtabs">
-      <button class="exp-subtab active" onclick="setExpSubtab('record')">✏️ 記帳</button>
-      <button class="exp-subtab" onclick="setExpSubtab('detail')">🗒 明細</button>
+      <button class="exp-subtab active" onclick="setExpSubtab('record')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="vertical-align:middle"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> 記帳</button>
+      <button class="exp-subtab" onclick="setExpSubtab('detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="vertical-align:middle"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> 明細</button>
     </div>
     <div class="exp-record-form">
       <div class="form-group">
@@ -2086,10 +2086,10 @@ const getBookingData = id => JSON.parse(localStorage.getItem('booking_' + id) ||
 const saveBookingData = (id, d) => localStorage.setItem('booking_' + id, JSON.stringify(d));
 
 const bookingSubtabInfo = [
-  { key: 'flight', icon: '✈️', label: '機票' },
-  { key: 'hotel',  icon: '🏨', label: '住宿' },
-  { key: 'car',    icon: '🚗', label: '租車' },
-  { key: 'ticket', icon: '🎟', label: '票券' },
+  { key: 'flight', icon: '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="vertical-align:middle"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>', label: '機票' },
+  { key: 'hotel',  icon: '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="vertical-align:middle"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zm-8 6H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg>', label: '住宿' },
+  { key: 'car',    icon: '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="vertical-align:middle"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8a1 1 0 001 1h1a1 1 0 001-1v-1h12v1a1 1 0 001 1h1a1 1 0 001-1v-8l-2.08-5.99zM6.5 16a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm11 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM5 11l1.5-4.5h11L19 11H5z"/></svg>', label: '租車' },
+  { key: 'ticket', icon: '<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="vertical-align:middle"><path d="M22 10V6a1 1 0 00-1-1H3a1 1 0 00-1 1v4a2 2 0 010 4v4a1 1 0 001 1h18a1 1 0 001-1v-4a2 2 0 010-4zM9 17H7V7h2v10zm2 0V7h4v10h-4z"/></svg>', label: '票券' },
 ];
 
 function renderBooking() {
@@ -2111,14 +2111,14 @@ function renderBooking() {
     contentHtml += `
       <div class="flight-total-card">
         <div><div class="flight-total-lbl">機票總金額</div><div class="flight-total-amt">${totalTWD.toLocaleString()}</div></div>
-        <span style="font-size:36px;opacity:0.4">✈️</span>
+        <span style="opacity:0.4"><svg viewBox="0 0 24 24" fill="currentColor" width="36" height="36"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></span>
       </div>`;
     if (!flights.length) contentHtml += `<p style="color:#bbb;text-align:center;padding:24px 0;font-size:13px">還沒有機票，點下方新增</p>`;
     flights.forEach(f => {
       contentHtml += `
         <div class="boarding-pass">
           <div class="bp-header">
-            <div class="bp-airline">✈️ ${f.airline} ${f.flightNo} <span class="bp-badge">BOARDING PASS</span></div>
+            <div class="bp-airline">${f.airline} ${f.flightNo} <span class="bp-badge">BOARDING PASS</span></div>
             <button class="bp-del-btn" onclick="delBooking('flight','${f.id}')">×</button>
           </div>
           <div style="padding:0 12px 4px;font-size:11px;color:#7a6020">${f.members?.join('、')||''}</div>
@@ -2148,7 +2148,7 @@ function renderBooking() {
       contentHtml += `<div class="booking-card">
         <div class="bc-header">
           <div style="display:flex;align-items:flex-start">
-            <span class="bc-icon">🏨</span>
+            <span class="bc-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zm-8 6H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg></span>
             <div><div class="bc-title">${h.name}</div><div class="bc-sub">入住 ${h.checkin||''} ～ 退房 ${h.checkout||''}</div>
             ${h.price ? `<div class="bc-price">${h.currency||'TWD'} ${Number(h.price).toLocaleString()}</div>` : ''}</div>
           </div>
@@ -2167,7 +2167,7 @@ function renderBooking() {
       contentHtml += `<div class="booking-card">
         <div class="bc-header">
           <div style="display:flex;align-items:flex-start">
-            <span class="bc-icon">🚗</span>
+            <span class="bc-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8a1 1 0 001 1h1a1 1 0 001-1v-1h12v1a1 1 0 001 1h1a1 1 0 001-1v-8l-2.08-5.99zM6.5 16a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm11 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM5 11l1.5-4.5h11L19 11H5z"/></svg></span>
             <div><div class="bc-title">${c.name}</div><div class="bc-sub">取車 ${c.pickup||''} ～ 還車 ${c.dropoff||''}</div>
             ${c.price ? `<div class="bc-price">${c.currency||'TWD'} ${Number(c.price).toLocaleString()}</div>` : ''}</div>
           </div>
@@ -2186,7 +2186,7 @@ function renderBooking() {
       contentHtml += `<div class="booking-card">
         <div class="bc-header">
           <div style="display:flex;align-items:flex-start">
-            <span class="bc-icon">🎟</span>
+            <span class="bc-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M22 10V6a1 1 0 00-1-1H3a1 1 0 00-1 1v4a2 2 0 010 4v4a1 1 0 001 1h18a1 1 0 001-1v-4a2 2 0 010-4zM9 17H7V7h2v10zm2 0V7h4v10h-4z"/></svg></span>
             <div><div class="bc-title">${t.name}</div><div class="bc-sub">${t.date||''} ${t.qty > 1 ? `× ${t.qty}張` : ''}</div>
             ${t.price ? `<div class="bc-price">${t.currency||'TWD'} ${Number(t.price).toLocaleString()}</div>` : ''}</div>
           </div>
