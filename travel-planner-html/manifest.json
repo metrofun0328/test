@@ -2,7 +2,6 @@
   "name": "趣桃",
   "short_name": "趣桃",
   "description": "輕鬆規劃你的旅遊行程",
-  "start_url": "./",
   "display": "standalone",
   "background_color": "#ff7eb3",
   "theme_color": "#ff7eb3",
