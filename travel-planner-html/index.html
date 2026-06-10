@@ -131,7 +131,7 @@
     .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(22px); }
 
     /* Activity list */
-    .activity-list { flex: 1; overflow-y: auto; padding: 8px 20px 80px; }
+    .activity-list { flex: 1; overflow-y: auto; padding: 8px 20px 100px; }
     .activity-item {
       background: white; border-radius: 12px; margin-bottom: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -178,7 +178,7 @@
     .empty-day-msg { text-align: center; color: #bbb; font-size: 13px; padding: 24px 0; }
 
     /* Expenses tab - redesign */
-    .expense-content { flex: 1; overflow-y: auto; padding: 0 0 80px; }
+    .expense-content { flex: 1; overflow-y: auto; padding: 0 0 100px; }
     .exp-subtabs { display: flex; gap: 6px; margin: 14px 20px 12px; background: white; border-radius: 12px; padding: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
     .exp-subtab { flex: 1; padding: 9px 4px; border: none; border-radius: 8px; background: none; font-size: 13px; font-weight: 600; color: #9a8878; cursor: pointer; transition: all 0.2s; }
     .exp-subtab.active { background: #4a7a50; color: white; }
@@ -213,8 +213,8 @@
     .settlement-box h3 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 10px; }
     .settlement-item { font-size: 13px; color: #b45309; padding: 7px 10px; background: rgba(255,255,255,0.6); border-radius: 8px; margin-bottom: 6px; }
     /* ======= BOTTOM NAV ======= */
-    .bottom-nav { background: #2d5080; border-radius: 24px 24px 0 0; display: flex; padding: 8px 8px env(safe-area-inset-bottom); flex-shrink: 0; box-shadow: 0 -4px 20px rgba(45,80,128,0.25); position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 390px; z-index: 100; }
-    @media (max-width: 420px) { .bottom-nav { width: 100%; left: 0; transform: none; } }
+    .bottom-nav { background: #2d5080; border-radius: 28px; display: flex; padding: 8px 8px; flex-shrink: 0; box-shadow: 0 4px 24px rgba(0,0,0,0.25); position: fixed; bottom: calc(12px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: 370px; z-index: 100; }
+    @media (max-width: 420px) { .bottom-nav { width: calc(100% - 24px); left: 50%; transform: translateX(-50%); } }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px 10px; border: none; background: none; cursor: pointer; color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 600; transition: all 0.15s; border-radius: 14px; }
     .nav-item.active { color: white; background: rgba(255,255,255,0.15); }
     .nav-item:active { transform: scale(0.88); background: rgba(255,255,255,0.22); color: white; }
@@ -251,7 +251,7 @@
     .section-title { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
 
     /* Members tab */
-    .members-content { flex: 1; overflow-y: auto; padding: 20px 20px 80px; }
+    .members-content { flex: 1; overflow-y: auto; padding: 20px 20px 100px; }
     .member-card { display: flex; align-items: center; gap: 14px; background: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
     .member-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #2d5080, #6080b0); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
     .member-name { font-size: 15px; font-weight: 600; color: #1a1a1a; }
@@ -261,7 +261,7 @@
     .add-member-row { display: flex; gap: 8px; margin-top: 6px; }
 
     /* Prep tab */
-    .prep-content { flex: 1; overflow-y: auto; padding: 14px 20px 80px; }
+    .prep-content { flex: 1; overflow-y: auto; padding: 14px 20px 100px; }
     .prep-subtabs { display: flex; gap: 6px; margin-bottom: 14px; }
     .prep-subtab { flex: 1; padding: 8px 4px; border: 1.5px solid #e0d8d0; border-radius: 10px; background: none; font-size: 13px; font-weight: 600; color: #9a8878; cursor: pointer; transition: all 0.2s; text-align: center; }
     .prep-subtab.active { background: #2d5080; color: white; border-color: #2d5080; }
@@ -296,7 +296,7 @@
     .join-modal button { width: 100%; padding: 13px; background: #2d5080; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
 
     /* ======= BOOKING TAB ======= */
-    .booking-content { flex: 1; overflow-y: auto; padding: 0 0 80px; }
+    .booking-content { flex: 1; overflow-y: auto; padding: 0 0 100px; }
     .booking-subtabs { display: flex; gap: 0; margin: 14px 20px 16px; background: white; border-radius: 14px; padding: 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
     .booking-subtab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border: none; border-radius: 10px; background: none; font-size: 11px; font-weight: 600; color: #9a8878; cursor: pointer; transition: all 0.2s; }
     .booking-subtab .bst-icon { font-size: 22px; line-height: 1; }
@@ -339,9 +339,9 @@
     .bc-del-btn { background: none; border: none; color: #e0d8d0; cursor: pointer; font-size: 18px; flex-shrink: 0; }
 
     /* Toast */
-    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 999; animation: fadeInUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); white-space: nowrap; }
+    .toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 999; animation: fadeInUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); white-space: nowrap; }
     /* 回頂按鈕 */
-    .scroll-top-btn { position: fixed; right: 18px; bottom: 90px; width: 40px; height: 40px; border-radius: 50%; background: #2d5080; color: white; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 12px rgba(45,80,128,0.35); z-index: 99; display: none; align-items: center; justify-content: center; transition: all 0.2s; }
+    .scroll-top-btn { position: fixed; right: 18px; bottom: 110px; width: 40px; height: 40px; border-radius: 50%; background: #2d5080; color: white; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 12px rgba(45,80,128,0.35); z-index: 99; display: none; align-items: center; justify-content: center; transition: all 0.2s; }
     .scroll-top-btn:active { transform: scale(0.88); }
     @keyframes fadeInUp { from { opacity:0; transform: translate(-50%,10px); } to { opacity:1; transform: translate(-50%,0); } }
 
