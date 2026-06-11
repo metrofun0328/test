@@ -84,25 +84,25 @@
     /* ======= TRIP PAGE ======= */
     #page-trip { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-    /* Trip top bar — hidden, controls moved into banner */
-    .trip-topbar { display: none; }
-    .back-btn { background: none; border: none; font-size: 15px; color: rgba(255,255,255,0.9); cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500; padding: 0; flex-shrink: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+    /* Trip top bar — slim row above banner */
+    .trip-topbar { display: flex; align-items: center; padding: calc(env(safe-area-inset-top) + 8px) 16px 8px; flex-shrink: 0; gap: 0; }
+    .back-btn { background: none; border: none; font-size: 15px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500; padding: 0; flex-shrink: 0; }
     .trip-topbar-right { display: flex; align-items: center; gap: 6px; margin-left: auto; }
-    .sync-badge { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-    .share-btn { background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; white-space: nowrap; backdrop-filter: blur(4px); }
-    .share-btn:hover { background: rgba(255,255,255,0.28); }
+    .sync-badge { font-size: 11px; color: #2d5080; font-weight: 600; white-space: nowrap; }
+    .share-btn { background: none; border: 1.5px solid #d0c8c0; border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: #9a8878; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s; white-space: nowrap; }
+    .share-btn:hover { border-color: #2d5080; color: #2d5080; }
     .trip-title { display: none; }
     .trip-dates { display: none; }
 
     /* Day banner */
-    .day-banner { position: relative; flex-shrink: 0; height: 190px; overflow: hidden; margin: 0; border-radius: 0 0 20px 20px; }
-    .day-banner-bg { position: absolute; inset: 0; border-radius: 0 0 20px 20px; background: linear-gradient(135deg, #2d5080, #6080b0, #e8946a); transition: background 0.4s; }
+    .day-banner { position: relative; flex-shrink: 0; height: 160px; overflow: hidden; margin: 0 8px; border-radius: 16px; }
+    .day-banner-bg { position: absolute; inset: 0; border-radius: 16px; background: linear-gradient(135deg, #2d5080, #6080b0, #e8946a); transition: background 0.4s; }
     .day-banner-bg.has-img { background: none; }
-    .day-banner-bg img { width: 100%; height: 100%; object-fit: cover; border-radius: 0 0 20px 20px; }
-    .day-banner-overlay { position: absolute; inset: 0; border-radius: 0 0 20px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.5)); }
-    .day-banner-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 12px) 16px 14px; }
-    .day-banner-top { display: flex; align-items: center; justify-content: space-between; }
-    .day-banner-trip-title { font-size: 17px; font-weight: 800; color: white; text-shadow: 0 1px 6px rgba(0,0,0,0.35); letter-spacing: -0.3px; line-height: 1.2; margin-top: 6px; }
+    .day-banner-bg img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+    .day-banner-overlay { position: absolute; inset: 0; border-radius: 16px; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5)); }
+    .day-banner-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 14px 16px 12px; }
+    .day-banner-top { display: none; }
+    .day-banner-trip-title { font-size: 18px; font-weight: 800; color: white; text-shadow: 0 1px 6px rgba(0,0,0,0.35); letter-spacing: -0.3px; line-height: 1.2; }
     .day-banner-trip-dates { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
     .day-banner-left { display: flex; flex-direction: column; }
     .day-banner-day { font-size: 20px; font-weight: 900; color: white; line-height: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
@@ -113,7 +113,7 @@
     .day-banner-upload-btn { background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.5); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; cursor: pointer; backdrop-filter: blur(4px); padding: 0; }
 
     /* Day tabs */
-    .day-tabs-wrap { background: #f5e8d8; padding: 10px 16px 0; flex-shrink: 0; margin-top: 8px; }
+    .day-tabs-wrap { background: #f5e8d8; padding: 10px 16px 0; flex-shrink: 0; margin-top: 6px; }
     .day-tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 12px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.10)); }
     .day-tabs::-webkit-scrollbar { display: none; }
     .day-tab { flex-shrink: 0; padding: 8px 14px; border-radius: 10px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; background: #e8d8c8; color: #9a8878; text-align: center; line-height: 1.3; }
@@ -757,29 +757,23 @@
 
 <!-- ===== 行程頁 ===== -->
 <div id="page-trip" class="page hidden">
-  <!-- 頂部（隱藏用，保留元素供 JS 使用） -->
+  <!-- 頂部控制列 -->
   <div class="trip-topbar">
+    <button class="back-btn" id="banner-back-btn" onclick="goHome()">‹ 返回</button>
+    <div class="trip-topbar-right">
+      <span class="sync-badge" id="sync-status"></span>
+      <button class="share-btn" onclick="shareTrip()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:middle"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg> 分享</button>
+    </div>
     <div class="trip-title" id="trip-title-text"></div>
     <div class="trip-dates" id="trip-dates-text"></div>
   </div>
 
-  <!-- 日期橫幅（整合頂部控制列） -->
+  <!-- 日期橫幅 -->
   <div class="day-banner" id="day-banner">
     <div class="day-banner-bg" id="day-banner-bg"></div>
     <div class="day-banner-overlay"></div>
     <div class="day-banner-content">
-      <!-- 第一行：返回 + 已同步 + 分享 + 主題切換 -->
-      <div class="day-banner-top">
-        <button class="back-btn" id="banner-back-btn" onclick="goHome()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
-          返回
-        </button>
-        <div class="trip-topbar-right">
-          <span class="sync-badge" id="sync-status"></span>
-          <button class="share-btn" onclick="shareTrip()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:middle"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg> 分享</button>
-        </div>
-      </div>
-      <!-- 中間：旅程名稱 + 日期 -->
+      <!-- 旅程名稱 + 日期 -->
       <div>
         <div class="day-banner-trip-title" id="banner-trip-title"></div>
         <div class="day-banner-trip-dates" id="banner-trip-dates"></div>
