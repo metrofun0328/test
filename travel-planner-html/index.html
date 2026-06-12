@@ -343,6 +343,8 @@
     .bc-members { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
     .bc-member-chip { font-size: 11px; background: #dce8f5; color: #2d5080; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
     .bc-del-btn { background: none; border: none; color: #e0d8d0; cursor: pointer; font-size: 18px; flex-shrink: 0; }
+    .bc-edit-btn { background: none; border: none; color: #b0b8c8; cursor: pointer; font-size: 14px; flex-shrink: 0; padding: 2px 4px; }
+    .bc-card-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
 
     /* Toast */
     .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 999; animation: fadeInUp 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); white-space: nowrap; }
@@ -515,6 +517,7 @@
     .app.light .bc-note { background: #f2f2f7; color: #6e6e73; }
     .app.light .bc-member-chip { background: rgba(74,91,191,0.1); color: #4A5BBF; }
     .app.light .bc-del-btn { color: #d1d1d6; }
+    .app.light .bc-edit-btn { color: #aeaeb2; }
 
     /* Modals */
     .app.light .modal { background: #ffffff; border: 1px solid #e5e5ea; }
@@ -671,6 +674,7 @@
     .app.dark .bc-note { background: #2e3548; color: #8892aa; }
     .app.dark .bc-member-chip { background: rgba(74,158,255,0.15); color: #4a9eff; }
     .app.dark .bc-del-btn { color: #3d4a6a; }
+    .app.dark .bc-edit-btn { color: #4a5a7a; }
     .app.dark .bp-body { background: #1e2438; }
     .app.dark .bp-code { color: #f0f4ff; }
     .app.dark .bp-city { color: #6070a0; }
@@ -2134,7 +2138,10 @@ function renderBooking() {
         <div class="boarding-pass">
           <div class="bp-header">
             <div class="bp-airline">${f.airline} ${f.flightNo} <span class="bp-badge">BOARDING PASS</span></div>
-            <button class="bp-del-btn" onclick="delBooking('flight','${f.id}')">×</button>
+            <div class="bc-card-actions">
+              <button class="bc-edit-btn" onclick="openEditBookingModal('flight','${f.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="bp-del-btn" onclick="delBooking('flight','${f.id}')">×</button>
+            </div>
           </div>
           <div style="padding:0 12px 4px;font-size:11px;color:#7a6020">${f.members?.join('、')||''}</div>
           <div class="bp-body">
@@ -2167,7 +2174,10 @@ function renderBooking() {
             <div><div class="bc-title">${h.name}</div><div class="bc-sub">入住 ${h.checkin||''} ～ 退房 ${h.checkout||''}</div>
             ${h.price ? `<div class="bc-price">${h.currency||'TWD'} ${Number(h.price).toLocaleString()}</div>` : ''}</div>
           </div>
-          <button class="bc-del-btn" onclick="delBooking('hotel','${h.id}')">×</button>
+          <div class="bc-card-actions">
+              <button class="bc-edit-btn" onclick="openEditBookingModal('hotel','${h.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="bc-del-btn" onclick="delBooking('hotel','${h.id}')">×</button>
+            </div>
         </div>
         ${h.note ? `<div class="bc-note">${h.note}</div>` : ''}
         ${h.members?.length ? `<div class="bc-members">${h.members.map(m=>`<span class="bc-member-chip">${m}</span>`).join('')}</div>` : ''}
@@ -2186,7 +2196,10 @@ function renderBooking() {
             <div><div class="bc-title">${c.name}</div><div class="bc-sub">取車 ${c.pickup||''} ～ 還車 ${c.dropoff||''}</div>
             ${c.price ? `<div class="bc-price">${c.currency||'TWD'} ${Number(c.price).toLocaleString()}</div>` : ''}</div>
           </div>
-          <button class="bc-del-btn" onclick="delBooking('car','${c.id}')">×</button>
+          <div class="bc-card-actions">
+              <button class="bc-edit-btn" onclick="openEditBookingModal('car','${c.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="bc-del-btn" onclick="delBooking('car','${c.id}')">×</button>
+            </div>
         </div>
         ${c.note ? `<div class="bc-note">${c.note}</div>` : ''}
         ${c.members?.length ? `<div class="bc-members">${c.members.map(m=>`<span class="bc-member-chip">${m}</span>`).join('')}</div>` : ''}
@@ -2205,7 +2218,10 @@ function renderBooking() {
             <div><div class="bc-title">${t.name}</div><div class="bc-sub">${t.date||''} ${t.qty > 1 ? `× ${t.qty}張` : ''}</div>
             ${t.price ? `<div class="bc-price">${t.currency||'TWD'} ${Number(t.price).toLocaleString()}</div>` : ''}</div>
           </div>
-          <button class="bc-del-btn" onclick="delBooking('ticket','${t.id}')">×</button>
+          <div class="bc-card-actions">
+              <button class="bc-edit-btn" onclick="openEditBookingModal('ticket','${t.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="bc-del-btn" onclick="delBooking('ticket','${t.id}')">×</button>
+            </div>
         </div>
         ${t.note ? `<div class="bc-note">${t.note}</div>` : ''}
         ${t.members?.length ? `<div class="bc-members">${t.members.map(m=>`<span class="bc-member-chip">${m}</span>`).join('')}</div>` : ''}
@@ -2220,7 +2236,16 @@ function renderBooking() {
 function setBookingSubtab(key) { bookingSubtab = key; renderBooking(); }
 
 let bookingMembersSelected = [];
+let editingBookingId = null;
+
 function openBookingModal(type) {
+  editingBookingId = null;
+  const titles = { flight:'新增機票', hotel:'新增住宿', car:'新增租車', ticket:'新增票券' };
+  const btns = { flight:'新增機票', hotel:'新增住宿', car:'新增租車', ticket:'新增票券' };
+  document.querySelector(`#modal-${type} .modal-header h3`).textContent = titles[type];
+  document.querySelector(`#modal-${type} .btn-submit`).textContent = btns[type];
+  // clear fields
+  document.getElementById('modal-' + type).querySelectorAll('input:not([type=hidden])').forEach(el => { if (el.type !== 'file') el.value = ''; });
   const members = getExpData(currentTripId).members;
   bookingMembersSelected = members.map(m => m.name);
   const chipsId = { flight:'fl-members-chips', hotel:'ht-members-chips', car:'car-members-chips', ticket:'tk-members-chips' }[type];
@@ -2228,8 +2253,59 @@ function openBookingModal(type) {
   setTimeout(() => {
     const el = document.getElementById(chipsId);
     if (el) el.innerHTML = members.map(m => `<button class="toggle-chip sel-blue" id="bm-${m.name}" onclick="togBookingMember('${m.name}','${chipsId}')">${m.name}</button>`).join('');
+    if (type === 'flight') document.getElementById('fl-date').value = new Date().toISOString().split('T')[0];
+  }, 50);
+}
+
+function openEditBookingModal(type, id) {
+  const d = getBookingData(currentTripId);
+  const item = d[type].find(i => i.id === id);
+  if (!item) return;
+  editingBookingId = id;
+  const titles = { flight:'編輯機票', hotel:'編輯住宿', car:'編輯租車', ticket:'編輯票券' };
+  document.querySelector(`#modal-${type} .modal-header h3`).textContent = titles[type];
+  document.querySelector(`#modal-${type} .btn-submit`).textContent = '儲存';
+  document.getElementById('modal-' + type).classList.remove('hidden');
+  const members = getExpData(currentTripId).members;
+  bookingMembersSelected = [...(item.members || [])];
+  const chipsId = { flight:'fl-members-chips', hotel:'ht-members-chips', car:'car-members-chips', ticket:'tk-members-chips' }[type];
+  setTimeout(() => {
+    const el = document.getElementById(chipsId);
+    if (el) el.innerHTML = members.map(m => `<button class="toggle-chip ${bookingMembersSelected.includes(m.name)?'sel-blue':''}" id="bm-${m.name}" onclick="togBookingMember('${m.name}','${chipsId}')">${m.name}</button>`).join('');
     if (type === 'flight') {
-      document.getElementById('fl-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('fl-airline').value = item.airline || '';
+      document.getElementById('fl-flightno').value = item.flightNo || '';
+      document.getElementById('fl-from-code').value = item.fromCode || '';
+      document.getElementById('fl-from-city').value = item.fromCity || '';
+      document.getElementById('fl-to-code').value = item.toCode || '';
+      document.getElementById('fl-to-city').value = item.toCity || '';
+      document.getElementById('fl-depart').value = item.depart || '';
+      document.getElementById('fl-arrive').value = item.arrive || '';
+      document.getElementById('fl-date').value = item.date || '';
+      document.getElementById('fl-baggage').value = item.baggage || '';
+      document.getElementById('fl-price').value = item.price || '';
+      document.getElementById('fl-currency').value = item.currency || 'TWD';
+    } else if (type === 'hotel') {
+      document.getElementById('ht-name').value = item.name || '';
+      document.getElementById('ht-checkin').value = item.checkin || '';
+      document.getElementById('ht-checkout').value = item.checkout || '';
+      document.getElementById('ht-price').value = item.price || '';
+      document.getElementById('ht-currency').value = item.currency || 'TWD';
+      document.getElementById('ht-note').value = item.note || '';
+    } else if (type === 'car') {
+      document.getElementById('car-name').value = item.name || '';
+      document.getElementById('car-pickup').value = item.pickup || '';
+      document.getElementById('car-dropoff').value = item.dropoff || '';
+      document.getElementById('car-price').value = item.price || '';
+      document.getElementById('car-currency').value = item.currency || 'TWD';
+      document.getElementById('car-note').value = item.note || '';
+    } else if (type === 'ticket') {
+      document.getElementById('tk-name').value = item.name || '';
+      document.getElementById('tk-date').value = item.date || '';
+      document.getElementById('tk-qty').value = item.qty || 1;
+      document.getElementById('tk-price').value = item.price || '';
+      document.getElementById('tk-currency').value = item.currency || 'TWD';
+      document.getElementById('tk-note').value = item.note || '';
     }
   }, 50);
 }
@@ -2272,7 +2348,13 @@ function confirmAddBooking(type) {
     if (!item.name) return alert('請填寫票券名稱');
   }
   if (!d[type]) d[type] = [];
-  d[type].push(item);
+  if (editingBookingId) {
+    const idx = d[type].findIndex(i => i.id === editingBookingId);
+    if (idx !== -1) d[type][idx] = { ...d[type][idx], ...item, id: editingBookingId };
+  } else {
+    d[type].push(item);
+  }
+  editingBookingId = null;
   saveBookingData(currentTripId, d);
   closeBookingModal(type);
   renderBooking();
