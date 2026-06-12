@@ -15,15 +15,15 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background-color: #c8b8a8;
-      background-image: radial-gradient(circle, #ddd0c0 1px, transparent 1px);
-      background-size: 18px 18px;
-      background-position: 0 0;
       display: flex; justify-content: center; align-items: flex-start;
       min-height: 100vh;
     }
     .app {
       width: 390px; min-height: 100vh;
-      background-color: rgba(245,232,216,0.97);
+      background-color: #f5e8d8;
+      background-image: radial-gradient(circle, #ddd0c0 1px, transparent 1px);
+      background-size: 18px 18px;
+      background-position: 0 0;
       position: relative; overflow: hidden;
       display: flex; flex-direction: column;
       box-shadow: 0 0 40px rgba(0,0,0,0.18);
@@ -393,13 +393,13 @@
     }
 
     /* ===== LIGHT MODE OVERRIDES (Minimal White) ===== */
-    body.theme-light {
-      background-color: #e5e5ea;
-      background-image: radial-gradient(circle, #c7c7cc 1px, transparent 1px);
+    body.theme-light { background-color: #e5e5ea; }
+    .app.light {
+      background-color: #f2f2f7;
+      background-image: radial-gradient(circle, #d1d1d6 1px, transparent 1px);
       background-size: 18px 18px;
       background-position: 0 0;
     }
-    .app.light { background-color: rgba(242,242,247,0.97); }
 
     /* Home */
     .app.light .home-header h1 { color: #1c1c1e; }
@@ -536,15 +536,15 @@
 
     /* ===== DARK MODE OVERRIDES ===== */
     /* Body */
-    body.theme-dark {
-      background-color: #141824;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    body.theme-dark { background-color: #141824; }
+
+    /* App shell */
+    .app.dark {
+      background-color: #1a1f2e;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
       background-size: 18px 18px;
       background-position: 0 0;
     }
-
-    /* App shell */
-    .app.dark { background-color: rgba(26,31,46,0.97); }
 
     /* Home page */
     .app.dark .home-header h1 { color: #f0f4ff; }
