@@ -86,7 +86,7 @@
     #page-trip { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
     /* Trip top bar — slim row above banner */
-    .trip-topbar { display: flex; align-items: center; padding: calc(env(safe-area-inset-top) + 8px) 16px 8px; flex-shrink: 0; gap: 0; }
+    .trip-topbar { display: flex; align-items: center; padding: calc(var(--sat, env(safe-area-inset-top)) + 8px) 16px 8px; flex-shrink: 0; gap: 0; }
     .back-btn { background: none; border: none; font-size: 15px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500; padding: 0; flex-shrink: 0; }
     .trip-topbar-right { display: flex; align-items: center; gap: 6px; margin-left: auto; padding-right: 48px; }
     .sync-badge { font-size: 11px; color: #2d5080; font-weight: 600; white-space: nowrap; }
@@ -1180,6 +1180,16 @@
 </div>
 
 <script>
+// 鎖定 safe-area-inset-top，防止切換 theme-color 時重算造成版面位移
+(function() {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;top:0;padding-top:env(safe-area-inset-top);pointer-events:none;';
+  document.documentElement.appendChild(el);
+  const sat = parseInt(getComputedStyle(el).paddingTop) || 0;
+  document.documentElement.removeChild(el);
+  document.documentElement.style.setProperty('--sat', sat + 'px');
+})();
+
 // ===== 設定 =====
 const API_URL = 'https://script.google.com/macros/s/AKfycbzrBFPip1ByJlVCN814h2y1maggzrXpwOOnbqUd7gsypnyBgF_ScGx_hzkEZad-Fxou/exec';
 
